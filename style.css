@@ -1,0 +1,55 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Encabezado */
+header {
+    background-color: #0077cc;
+    color: white;
+    text-align: center;
+    padding: 15px;
+}
+
+/* Secciones de parciales */
+.parcial {
+    background: white;
+    margin: 20px auto;
+    padding: 15px;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 10px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+h2 {
+    color: #0077cc;
+}
+
+/* Lista de actividades */
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    background: #e8f4ff;
+    margin: 5px 0;
+    padding: 10px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+ul li:hover {
+    background: #cce0ff;
+}
+
+ul li a {
+    text-decoration: none;
+    color: #005599;
+    font-weight: bold;
+}
