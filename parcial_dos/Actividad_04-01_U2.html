@@ -25,8 +25,8 @@
         
         table {
             border: 1px solid #C5C5C5;
-            margin: 25px auto; /* Centra la tabla y mantiene margen */
-            max-width: 95%; /* Evita que toque los bordes de la pantalla */
+            margin: 25px auto;
+            max-width: 95%;
             width: 100%;
             border-spacing: 0;
             border-radius: 12px;
@@ -34,7 +34,7 @@
             background: white;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
             table-layout: fixed;
-            box-sizing: border-box; /* Asegura que los márgenes no afecten el ancho */
+            box-sizing: border-box;
         }
         
         th, td {
@@ -43,19 +43,29 @@
             font-size: 16px;
             color: #333;
             border-bottom: 1px solid #E0E0E0;
-            background-color: #FFFFFF;
+            /* Quitamos el fondo blanco para que se vea el alternado */
         }
         
         th {
             text-transform: uppercase;
             font-weight: bold;
             color: #A0A0A0;
+            background-color: #FFFFFF; /* Conservamos blanco solo para encabezado */
         }
         
         /* Asignamos un ancho fijo a cada columna */
-        th:nth-child(1), td:nth-child(1) { width: 20%; } /* Columna de color */
-        th:nth-child(2), td:nth-child(2) { width: 30%; } /* Nombre */
-        tr:nth-child(even) { background-color: #C5C5C5; }
+        th:nth-child(1), td:nth-child(1) { width: 20%; }
+        th:nth-child(2), td:nth-child(2) { width: 30%; }
+        
+        /* Colores de fondo alternados en gris */
+        tr:nth-child(even) {
+            background-color: #F5F5F5; /* Gris claro */
+        }
+        
+        tr:nth-child(odd) {
+            background-color: #FFFFFF; /* Blanco */
+        }
+
 
     </style>
     </head>
