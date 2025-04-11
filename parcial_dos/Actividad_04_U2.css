@@ -1,10 +1,12 @@
 h1{
     border: 2px solid tomato;
+    font-family: 'Roboto', sans-serif;
 }
 ul{
     border-width: 5px;
     border-style: dotted;
     border-color: dodgerblue;
+    font-family: 'Comic Sans', sans-serif;
 }
 li{
     border-width: 2.5px;
