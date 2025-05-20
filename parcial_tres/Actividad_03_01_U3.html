@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Unidad 3 | Actividad 03-01</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta charset="utf-8">
+    <meta name="Autor" content="Sanchez Flores Fernando Jesus">
+    <meta name="Fecha" content="07-05-25">
+    <meta name="Descripcion" content="JavaScript">
+    <style type="text/css">
+        table {
+            border: 1px solid #C5C5C5;
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {text-align: left; padding: 10px;}
+        tr:nth-child(even) {background-color: #00D9ff;}
+        tr:hover {background-color: deeppink;}
+    </style>
+    </head>
+    <body>
+        <h1>Unidad 3 | Actividad 03 - 01 :: Javascript</h1>
+        <script>
+        let numTabla, numElementos;
+        do {
+            numTabla = window.prompt("¿Cuál tabla deseas calcular (1-10)?");
+            numTabla = Number(numTabla);
+        } while (numTabla < 1 || numTabla > 10);
+        
+        do {
+            numElementos = window.prompt("¿Cuántos elementos deseas mostrar (10-100)?");
+            numElementos = Number(numElementos);
+        } while (numElementos < 10 || numElementos > 100);
+    
+        document.write("<table>");
+        document.write("<tr><th>No.</th><th>Suma</th><th>Multiplicación</th></tr>");
+        
+        for (let i = 1; i <= numElementos; i++) {
+            document.write("<tr>");
+            document.write("<td>" + i + "</td>");
+            document.write("<td>" + numTabla + " + " + i + " = " + (numTabla + i) + "</td>");
+            document.write("<td>" + numTabla + " x " + i + " = " + (numTabla * i) + "</td>");
+            document.write("</tr>");
+        }
+        
+        document.write("</table>");
+        </script>
+    </body>
+</html>
