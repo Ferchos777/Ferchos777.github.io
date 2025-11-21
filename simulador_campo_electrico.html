@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Campo Eléctrico</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .simulator-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .canvas-container {
+            flex: 1;
+            min-width: 600px;
+            background: rgba(10, 15, 40, 0.8);
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        #electricFieldCanvas {
+            background: #0a1020;
+            border-radius: 8px;
+            display: block;
+            width: 100%;
+            cursor: crosshair;
+        }
+
+        .controls {
+            flex: 0 0 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .control-panel {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #ff7e5f;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 8px;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            margin: 15px 0 10px;
+            color: #feb47b;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-positive {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+
+        .btn-negative {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .btn-clear {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .slider-group {
+            margin: 15px 0;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff7e5f;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(255, 126, 95, 0.5);
+        }
+
+        .instructions {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .instructions h2 {
+            color: #2ecc71;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            margin: 15px 0;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .legend-positive {
+            background: #e74c3c;
+        }
+
+        .legend-negative {
+            background: #3498db;
+        }
+
+        .legend-field {
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+        }
+
+        .legend-equipotential {
+            background: #2ecc71;
+        }
+
+        .info-panel {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 1000px) {
+            .simulator-container {
+                flex-direction: column;
+            }
+            
+            .canvas-container {
+                min-width: 100%;
+            }
+            
+            .controls {
+                flex: 1;
+            }
+        }
+
+        .status {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(46, 204, 113, 0.2);
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulador de Campo Eléctrico</h1>
+            <p class="subtitle">Visualiza y experimenta con campos eléctricos generados por cargas puntuales. Coloca cargas, observa las líneas de campo y comprende las interacciones electrostáticas.</p>
+        </header>
+        
+        <div class="simulator-container">
+            <div class="canvas-container">
+                <canvas id="electricFieldCanvas" width="800" height="600"></canvas>
+                <div class="info-panel">
+                    <div>Haz clic en el canvas para colocar cargas</div>
+                    <div id="coordinates">X: 0, Y: 0</div>
+                </div>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color legend-positive"></div>
+                        <span>Carga Positiva</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-negative"></div>
+                        <span>Carga Negativa</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-field"></div>
+                        <span>Líneas de Campo</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color legend-equipotential"></div>
+                        <span>Equipotenciales</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <div class="control-panel">
+                    <h2>Controles de Carga</h2>
+                    <div class="button-group">
+                        <button id="addPositive" class="btn-positive">
+                            <span>⊕</span> Agregar Carga Positiva
+                        </button>
+                        <button id="addNegative" class="btn-negative">
+                            <span>⊖</span> Agregar Carga Negativa
+                        </button>
+                        <button id="clearAll" class="btn-clear">
+                            <span>🗑️</span> Limpiar Todo
+                        </button>
+                    </div>
+                    
+                    <h3>Visualización</h3>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="showFieldLines" checked>
+                            <span>Mostrar líneas de campo</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="showVectors">
+                            <span>Mostrar vectores de campo</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="showEquipotential">
+                            <span>Mostrar equipotenciales</span>
+                        </label>
+                    </div>
+                    
+                    <h3>Configuración</h3>
+                    <div class="slider-group">
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Intensidad del campo:</span>
+                                <span id="intensityValue">5</span>
+                            </div>
+                            <input type="range" id="fieldIntensity" min="1" max="10" value="5">
+                        </div>
+                        
+                        <div class="slider-container">
+                            <div class="slider-label">
+                                <span>Densidad de líneas:</span>
+                                <span id="densityValue">5</span>
+                            </div>
+                            <input type="range" id="lineDensity" min="1" max="10" value="5">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="status" id="status">
+                    Haz clic en un botón de carga y luego en el canvas
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>Instrucciones de Uso</h2>
+            <ul>
+                <li><strong>Agregar cargas:</strong> Haz clic en "Carga Positiva" o "Carga Negativa" y luego haz clic en el lienzo para colocar cargas.</li>
+                <li><strong>Mover cargas:</strong> Haz clic y arrastra las cargas para moverlas y observar cómo cambia el campo.</li>
+                <li><strong>Líneas de campo:</strong> Muestran la dirección del campo eléctrico (salen de cargas positivas, entran en negativas).</li>
+                <li><strong>Equipotenciales:</strong> Superficies con el mismo potencial eléctrico (perpendiculares a las líneas de campo).</li>
+                <li><strong>Vectores:</strong> Muestran la magnitud y dirección del campo en puntos específicos.</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        const canvas = document.getElementById('electricFieldCanvas');
+        const ctx = canvas.getContext('2d');
+        const status = document.getElementById('status');
+        
+        // Configuración
+        const k = 8.99e9; // Constante de Coulomb en N·m²/C²
+        let charges = [];
+        let selectedCharge = null;
+        let isDragging = false;
+        let mousePos = { x: 0, y: 0 };
+        let chargeToAdd = null; // 'positive' o 'negative'
+        
+        // Elementos de control
+        const addPositiveBtn = document.getElementById('addPositive');
+        const addNegativeBtn = document.getElementById('addNegative');
+        const clearAllBtn = document.getElementById('clearAll');
+        const showFieldLines = document.getElementById('showFieldLines');
+        const showVectors = document.getElementById('showVectors');
+        const showEquipotential = document.getElementById('showEquipotential');
+        const fieldIntensity = document.getElementById('fieldIntensity');
+        const lineDensity = document.getElementById('lineDensity');
+        const intensityValue = document.getElementById('intensityValue');
+        const densityValue = document.getElementById('densityValue');
+        const coordinates = document.getElementById('coordinates');
+        
+        // Actualizar valores de los sliders
+        fieldIntensity.addEventListener('input', () => {
+            intensityValue.textContent = fieldIntensity.value;
+            draw();
+        });
+        
+        lineDensity.addEventListener('input', () => {
+            densityValue.textContent = lineDensity.value;
+            draw();
+        });
+        
+        // Clase para representar una carga eléctrica
+        class Charge {
+            constructor(x, y, type, magnitude = 1e-6) {
+                this.x = x;
+                this.y = y;
+                this.type = type; // 'positive' o 'negative'
+                this.magnitude = magnitude; // En Coulombs
+                this.radius = 20;
+                this.isSelected = false;
+            }
+            
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                
+                if (this.type === 'positive') {
+                    // Gradiente para carga positiva
+                    const gradient = ctx.createRadialGradient(
+                        this.x, this.y, 0,
+                        this.x, this.y, this.radius
+                    );
+                    gradient.addColorStop(0, '#ff6b6b');
+                    gradient.addColorStop(1, '#e74c3c');
+                    ctx.fillStyle = gradient;
+                } else {
+                    // Gradiente para carga negativa
+                    const gradient = ctx.createRadialGradient(
+                        this.x, this.y, 0,
+                        this.x, this.y, this.radius
+                    );
+                    gradient.addColorStop(0, '#74b9ff');
+                    gradient.addColorStop(1, '#3498db');
+                    ctx.fillStyle = gradient;
+                }
+                
+                ctx.fill();
+                
+                // Borde resaltado si está seleccionado
+                if (this.isSelected) {
+                    ctx.strokeStyle = '#2ecc71';
+                    ctx.lineWidth = 3;
+                    ctx.stroke();
+                } else {
+                    ctx.strokeStyle = 'white';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                
+                // Dibujar el símbolo de la carga
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 18px Arial';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                if (this.type === 'positive') {
+                    ctx.fillText('+', this.x, this.y);
+                } else {
+                    ctx.fillText('−', this.x, this.y);
+                }
+            }
+            
+            containsPoint(x, y) {
+                const dx = this.x - x;
+                const dy = this.y - y;
+                return dx * dx + dy * dy <= this.radius * this.radius;
+            }
+        }
+        
+        // Función para calcular el campo eléctrico en un punto (x, y)
+        function calculateElectricField(x, y) {
+            let Ex = 0; // Componente x del campo
+            let Ey = 0; // Componente y del campo
+            
+            for (const charge of charges) {
+                const dx = x - charge.x;
+                const dy = y - charge.y;
+                const rSquared = dx * dx + dy * dy;
+                
+                // Evitar división por cero
+                if (rSquared < 100) continue;
+                
+                const r = Math.sqrt(rSquared);
+                const magnitude = k * charge.magnitude / rSquared;
+                
+                // Dirección del campo
+                let directionX = dx / r;
+                let directionY = dy / r;
+                
+                // Las cargas positivas generan campos que salen, las negativas entran
+                if (charge.type === 'positive') {
+                    Ex += magnitude * directionX;
+                    Ey += magnitude * directionY;
+                } else {
+                    Ex -= magnitude * directionX;
+                    Ey -= magnitude * directionY;
+                }
+            }
+            
+            return { Ex, Ey };
+        }
+        
+        // Función para dibujar las líneas de campo
+        function drawFieldLines() {
+            const density = parseInt(lineDensity.value);
+            const step = 40 - density * 3; // Más denso con valores mayores
+            
+            ctx.strokeStyle = 'rgba(255, 126, 95, 0.6)';
+            ctx.lineWidth = 1.5;
+            
+            for (let x = 30; x < canvas.width; x += step) {
+                for (let y = 30; y < canvas.height; y += step) {
+                    drawFieldLine(x, y);
+                }
+            }
+        }
+        
+        // Función para dibujar una línea de campo individual
+        function drawFieldLine(startX, startY) {
+            let x = startX;
+            let y = startY;
+            const maxSteps = 100;
+            const stepSize = 3;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            
+            for (let i = 0; i < maxSteps; i++) {
+                const field = calculateElectricField(x, y);
+                const magnitude = Math.sqrt(field.Ex * field.Ex + field.Ey * field.Ey);
+                
+                // Si el campo es muy débil, detener la línea
+                if (magnitude < 1e-5) break;
+                
+                // Normalizar el vector de campo
+                const normalizedEx = field.Ex / magnitude;
+                const normalizedEy = field.Ey / magnitude;
+                
+                // Avanzar en la dirección del campo
+                x += normalizedEx * stepSize;
+                y += normalizedEy * stepSize;
+                
+                // Si salimos del canvas, detener
+                if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) break;
+                
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.stroke();
+        }
+        
+        // Función para dibujar vectores de campo
+        function drawFieldVectors() {
+            const step = 50;
+            const intensity = parseInt(fieldIntensity.value);
+            
+            for (let x = 25; x < canvas.width; x += step) {
+                for (let y = 25; y < canvas.height; y += step) {
+                    const field = calculateElectricField(x, y);
+                    const magnitude = Math.sqrt(field.Ex * field.Ex + field.Ey * field.Ey);
+                    
+                    // Solo dibujar vectores si el campo es significativo
+                    if (magnitude > 1e-5) {
+                        // Normalizar y escalar el vector
+                        const scale = 15 * intensity / 5;
+                        const endX = x + (field.Ex / magnitude) * scale;
+                        const endY = y + (field.Ey / magnitude) * scale;
+                        
+                        // Dibujar el vector
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(endX, endY);
+                        ctx.strokeStyle = '#f39c12';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                        // Dibujar la punta de la flecha
+                        const angle = Math.atan2(endY - y, endX - x);
+                        ctx.beginPath();
+                        ctx.moveTo(endX, endY);
+                        ctx.lineTo(
+                            endX - 6 * Math.cos(angle - Math.PI/6),
+                            endY - 6 * Math.sin(angle - Math.PI/6)
+                        );
+                        ctx.lineTo(
+                            endX - 6 * Math.cos(angle + Math.PI/6),
+                            endY - 6 * Math.sin(angle + Math.PI/6)
+                        );
+                        ctx.closePath();
+                        ctx.fillStyle = '#f39c12';
+                        ctx.fill();
+                    }
+                }
+            }
+        }
+        
+        // Función para dibujar líneas equipotenciales
+        function drawEquipotentialLines() {
+            const levels = 8;
+            const maxPotential = 1000;
+            
+            for (let i = 1; i <= levels; i++) {
+                const potential = (i / levels) * maxPotential;
+                drawEquipotential(potential);
+                drawEquipotential(-potential);
+            }
+        }
+        
+        // Función para dibujar una línea equipotencial individual
+        function drawEquipotential(targetPotential) {
+            // Para simplificar, dibujaremos solo para sistemas con pocas cargas
+            if (charges.length === 0) return;
+            
+            ctx.beginPath();
+            ctx.strokeStyle = 'rgba(46, 204, 113, 0.4)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([5, 5]);
+            
+            // Comenzar desde un punto lejano
+            let startX = 0;
+            let startY = canvas.height / 2;
+            
+            // Encontrar un punto en la equipotencial
+            let foundStart = false;
+            for (let angle = 0; angle < Math.PI * 2; angle += 0.1) {
+                const x = startX + Math.cos(angle) * 10;
+                const y = startY + Math.sin(angle) * 10;
+                
+                const potential = calculatePotential(x, y);
+                
+                if (Math.abs(potential - targetPotential) < targetPotential * 0.1) {
+                    startX = x;
+                    startY = y;
+                    foundStart = true;
+                    break;
+                }
+            }
+            
+            if (!foundStart) return;
+            
+            ctx.moveTo(startX, startY);
+            
+            // Seguir la equipotencial
+            let x = startX;
+            let y = startY;
+            const stepSize = 2;
+            const maxSteps = 500;
+            
+            for (let step = 0; step < maxSteps; step++) {
+                // Calcular gradiente del potencial
+                const potential = calculatePotential(x, y);
+                const potentialX = calculatePotential(x + 1, y) - potential;
+                const potentialY = calculatePotential(x, y + 1) - potential;
+                
+                // La dirección perpendicular al gradiente es la equipotencial
+                const directionX = -potentialY;
+                const directionY = potentialX;
+                
+                const magnitude = Math.sqrt(directionX * directionX + directionY * directionY);
+                
+                if (magnitude < 1e-5) break;
+                
+                // Normalizar
+                const normalizedX = directionX / magnitude;
+                const normalizedY = directionY / magnitude;
+                
+                // Avanzar
+                x += normalizedX * stepSize;
+                y += normalizedY * stepSize;
+                
+                // Si salimos del canvas o volvemos al inicio, detener
+                if (x < 0 || x > canvas.width || y < 0 || y > canvas.height) break;
+                
+                const distanceToStart = Math.sqrt((x - startX) * (x - startX) + (y - startY) * (y - startY));
+                if (step > 10 && distanceToStart < 10) {
+                    ctx.closePath();
+                    break;
+                }
+                
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+        
+        // Función para calcular el potencial eléctrico en un punto
+        function calculatePotential(x, y) {
+            let potential = 0;
+            
+            for (const charge of charges) {
+                const dx = x - charge.x;
+                const dy = y - charge.y;
+                const r = Math.sqrt(dx * dx + dy * dy);
+                
+                // Evitar división por cero
+                if (r < 10) continue;
+                
+                if (charge.type === 'positive') {
+                    potential += k * charge.magnitude / r;
+                } else {
+                    potential -= k * charge.magnitude / r;
+                }
+            }
+            
+            return potential;
+        }
+        
+        // Función principal de dibujo
+        function draw() {
+            // Limpiar el canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Fondo del canvas
+            ctx.fillStyle = '#0a1020';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Dibujar una cuadrícula sutil
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            const gridSize = 50;
+            
+            for (let x = 0; x <= canvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            
+            for (let y = 0; y <= canvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            
+            // Dibujar las visualizaciones según las opciones seleccionadas
+            if (showEquipotential.checked) {
+                drawEquipotentialLines();
+            }
+            
+            if (showFieldLines.checked) {
+                drawFieldLines();
+            }
+            
+            if (showVectors.checked) {
+                drawFieldVectors();
+            }
+            
+            // Dibujar todas las cargas
+            for (const charge of charges) {
+                charge.draw();
+            }
+        }
+        
+        // Event Listeners para los botones
+        addPositiveBtn.addEventListener('click', () => {
+            chargeToAdd = 'positive';
+            status.textContent = 'Modo: Agregar Carga Positiva - Haz clic en el canvas';
+            status.style.display = 'block';
+        });
+        
+        addNegativeBtn.addEventListener('click', () => {
+            chargeToAdd = 'negative';
+            status.textContent = 'Modo: Agregar Carga Negativa - Haz clic en el canvas';
+            status.style.display = 'block';
+        });
+        
+        clearAllBtn.addEventListener('click', () => {
+            charges = [];
+            chargeToAdd = null;
+            selectedCharge = null;
+            status.textContent = 'Todas las cargas han sido eliminadas';
+            status.style.display = 'block';
+            draw();
+        });
+        
+        // Event Listeners para el canvas
+        canvas.addEventListener('mousedown', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Verificar si se hizo clic en una carga existente
+            for (const charge of charges) {
+                charge.isSelected = false;
+            }
+            
+            selectedCharge = null;
+            
+            for (let i = charges.length - 1; i >= 0; i--) {
+                const charge = charges[i];
+                if (charge.containsPoint(x, y)) {
+                    selectedCharge = charge;
+                    isDragging = true;
+                    charge.isSelected = true;
+                    status.textContent = 'Arrastra para mover la carga';
+                    status.style.display = 'block';
+                    draw();
+                    return;
+                }
+            }
+            
+            // Si no se hizo clic en una carga existente y hay una carga para agregar
+            if (chargeToAdd) {
+                charges.push(new Charge(x, y, chargeToAdd));
+                status.textContent = `Carga ${chargeToAdd === 'positive' ? 'positiva' : 'negativa'} agregada`;
+                status.style.display = 'block';
+                draw();
+            }
+        });
+        
+        canvas.addEventListener('mousemove', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            // Actualizar coordenadas del mouse
+            coordinates.textContent = `X: ${x}, Y: ${y}`;
+            
+            if (isDragging && selectedCharge) {
+                selectedCharge.x = x;
+                selectedCharge.y = y;
+                draw();
+            }
+        });
+        
+        canvas.addEventListener('mouseup', () => {
+            isDragging = false;
+            if (selectedCharge) {
+                status.textContent = 'Carga movida - Selecciona otra acción';
+                status.style.display = 'block';
+            }
+        });
+        
+        canvas.addEventListener('mouseleave', () => {
+            isDragging = false;
+        });
+        
+        // Event Listeners para los checkboxes
+        showFieldLines.addEventListener('change', draw);
+        showVectors.addEventListener('change', draw);
+        showEquipotential.addEventListener('change', draw);
+        
+        // Dibujar inicialmente
+        draw();
+        
+        // Agregar algunas cargas de ejemplo
+        charges.push(new Charge(300, 300, 'positive'));
+        charges.push(new Charge(500, 300, 'negative'));
+        draw();
+    </script>
+</body>
+</html>
