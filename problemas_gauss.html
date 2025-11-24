@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problemas Interactivos - Ley de Gauss</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .gauss-law {
+            font-family: 'Cambria Math', serif;
+            font-size: 2rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .problems-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 600px) {
+            .problems-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .problem-card {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .problem-title {
+            font-size: 1.4rem;
+            color: #ff7e5f;
+            font-weight: bold;
+        }
+
+        .difficulty {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .difficulty.easy {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        .difficulty.medium {
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+            border: 1px solid #f39c12;
+        }
+
+        .difficulty.hard {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+
+        .problem-content {
+            margin-bottom: 25px;
+        }
+
+        .problem-text {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #ecf0f1;
+        }
+
+        .problem-image {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .diagram {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            line-height: 1.4;
+            color: #bdc3c7;
+        }
+
+        .formula {
+            font-family: 'Cambria Math', serif;
+            font-size: 1.3rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 126, 95, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 126, 95, 0.3);
+        }
+
+        .input-group {
+            margin: 20px 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #bdc3c7;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+        }
+
+        input[type="number"]:focus, input[type="text"]:focus {
+            border-color: #ff7e5f;
+            outline: none;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-check {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+
+        .btn-hint {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+
+        .btn-solution {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+            border: 1px solid;
+        }
+
+        .feedback.correct {
+            background: rgba(46, 204, 113, 0.2);
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        .feedback.incorrect {
+            background: rgba(231, 76, 60, 0.2);
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .hint, .solution {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            display: none;
+            color: #ecf0f1;
+        }
+
+        .progress-container {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        .theory-review {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .theory-review h2 {
+            color: #ff7e5f;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .concept {
+            margin-bottom: 25px;
+        }
+
+        .concept h3 {
+            color: #feb47b;
+            margin-bottom: 10px;
+        }
+
+        .concept p {
+            line-height: 1.6;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .completed-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Problemas Interactivos - Ley de Gauss</h1>
+            <p class="subtitle">Practica la aplicación de la Ley de Gauss con estos problemas interactivos. Verifica tus respuestas y recibe retroalimentación inmediata.</p>
+            <div class="gauss-law">∮<b>E</b> · d<b>A</b> = Q<sub>enc</sub> / ε₀</div>
+        </header>
+
+        <div class="navigation">
+            <a href="#" class="nav-btn">🏠 Simulador Campo Eléctrico</a>
+            <a href="#" class="nav-btn">🧲 Simulador Campo Magnético</a>
+            <a href="#" class="nav-btn">🎯 Problemas Interactivos</a>
+            <a href="#" class="nav-btn">📚 Teoría y Conceptos</a>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-header">
+                <h2>Tu Progreso</h2>
+                <span id="progressText">0/6 problemas resueltos</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-stats">
+                <span>Fácil: <span id="easyCount">0</span>/2</span>
+                <span>Medio: <span id="mediumCount">0</span>/2</span>
+                <span>Difícil: <span id="hardCount">0</span>/2</span>
+            </div>
+        </div>
+
+        <div class="problems-container">
+            <!-- Problema 1 -->
+            <div class="problem-card">
+                <div class="problem-header">
+                    <div class="problem-title">Problema 1: Esfera Conductora</div>
+                    <div class="difficulty easy">Fácil</div>
+                </div>
+                <div class="problem-content">
+                    <p class="problem-text">Una esfera conductora de radio R = 10 cm tiene una carga total Q = 5 μC distribuida uniformemente en su superficie.</p>
+                    <div class="problem-image">
+                        <div class="diagram">
+                            ● Esfera conductora<br>
+                            Radio R = 10 cm<br>
+                            Carga Q = 5 μC
+                        </div>
+                    </div>
+                    <p class="problem-text">Calcula el campo eléctrico a una distancia r = 15 cm del centro de la esfera.</p>
+                    <div class="formula">E = ? (N/C)</div>
+                    
+                    <div class="input-group">
+                        <label for="answer1">Tu respuesta (en N/C):</label>
+                        <input type="number" id="answer1" step="0.1" placeholder="Ingresa el valor numérico">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-check" onclick="checkAnswer(1)">
+                            <span>✓</span> Verificar
+                        </button>
+                        <button class="btn-hint" onclick="showHint(1)">
+                            <span>💡</span> Pista
+                        </button>
+                    </div>
+                    
+                    <div id="feedback1" class="feedback"></div>
+                    <div id="hint1" class="hint">
+                        <p><strong>Pista:</strong> Para puntos fuera de una esfera conductora, la esfera se comporta como si toda su carga estuviera concentrada en el centro. Usa la ley de Coulomb.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problema 2 -->
+            <div class="problem-card">
+                <div class="problem-header">
+                    <div class="problem-title">Problema 2: Línea de Carga</div>
+                    <div class="difficulty easy">Fácil</div>
+                </div>
+                <div class="problem-content">
+                    <p class="problem-text">Una línea infinita de carga tiene una densidad lineal uniforme λ = 3 μC/m.</p>
+                    <div class="problem-image">
+                        <div class="diagram">
+                            ─────────── Línea de carga infinita<br>
+                            Densidad λ = 3 μC/m
+                        </div>
+                    </div>
+                    <p class="problem-text">Calcula el campo eléctrico a una distancia r = 20 cm de la línea.</p>
+                    <div class="formula">E = ? (N/C)</div>
+                    
+                    <div class="input-group">
+                        <label for="answer2">Tu respuesta (en N/C):</label>
+                        <input type="number" id="answer2" step="0.1" placeholder="Ingresa el valor numérico">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-check" onclick="checkAnswer(2)">
+                            <span>✓</span> Verificar
+                        </button>
+                        <button class="btn-hint" onclick="showHint(2)">
+                            <span>💡</span> Pista
+                        </button>
+                    </div>
+                    
+                    <div id="feedback2" class="feedback"></div>
+                    <div id="hint2" class="hint">
+                        <p><strong>Pista:</strong> Usa una superficie gaussiana cilíndrica. El campo es radial y perpendicular a la línea de carga.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problema 3 -->
+            <div class="problem-card">
+                <div class="problem-header">
+                    <div class="problem-title">Problema 3: Plano Infinito</div>
+                    <div class="difficulty medium">Medio</div>
+                </div>
+                <div class="problem-content">
+                    <p class="problem-text">Un plano infinito tiene una densidad superficial de carga uniforme σ = 8 nC/m².</p>
+                    <div class="problem-image">
+                        <div class="diagram">
+                            ▬▬▬▬▬▬▬▬ Plano infinito<br>
+                            Densidad σ = 8 nC/m²
+                        </div>
+                    </div>
+                    <p class="problem-text">Calcula el campo eléctrico generado por este plano.</p>
+                    <div class="formula">E = ? (N/C)</div>
+                    
+                    <div class="input-group">
+                        <label for="answer3">Tu respuesta (en N/C):</label>
+                        <input type="number" id="answer3" step="0.1" placeholder="Ingresa el valor numérico">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-check" onclick="checkAnswer(3)">
+                            <span>✓</span> Verificar
+                        </button>
+                        <button class="btn-hint" onclick="showHint(3)">
+                            <span>💡</span> Pista
+                        </button>
+                        <button class="btn-solution" onclick="showSolution(3)">
+                            <span>📖</span> Solución
+                        </button>
+                    </div>
+                    
+                    <div id="feedback3" class="feedback"></div>
+                    <div id="hint3" class="hint">
+                        <p><strong>Pista:</strong> Usa una superficie gaussiana con forma de "caja" que atraviese el plano. El campo es perpendicular al plano.</p>
+                    </div>
+                    <div id="solution3" class="solution">
+                        <p><strong>Solución Completa:</strong></p>
+                        <p>Para un plano infinito: E = σ / (2ε₀)</p>
+                        <p>ε₀ = 8.85 × 10⁻¹² C²/N·m²</p>
+                        <p>σ = 8 × 10⁻⁹ C/m²</p>
+                        <p>E = (8 × 10⁻⁹) / (2 × 8.85 × 10⁻¹²) = 452 N/C</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problema 4 -->
+            <div class="problem-card">
+                <div class="problem-header">
+                    <div class="problem-title">Problema 4: Esfera No Conductora</div>
+                    <div class="difficulty medium">Medio</div>
+                </div>
+                <div class="problem-content">
+                    <p class="problem-text">Una esfera no conductora de radio R = 15 cm tiene una carga total Q = 10 μC distribuida uniformemente en todo su volumen.</p>
+                    <div class="problem-image">
+                        <div class="diagram">
+                            ● Esfera no conductora<br>
+                            Radio R = 15 cm<br>
+                            Carga Q = 10 μC (volumétrica)
+                        </div>
+                    </div>
+                    <p class="problem-text">Calcula el campo eléctrico a una distancia r = 10 cm del centro de la esfera.</p>
+                    <div class="formula">E = ? (N/C)</div>
+                    
+                    <div class="input-group">
+                        <label for="answer4">Tu respuesta (en N/C):</label>
+                        <input type="number" id="answer4" step="0.1" placeholder="Ingresa el valor numérico">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-check" onclick="checkAnswer(4)">
+                            <span>✓</span> Verificar
+                        </button>
+                        <button class="btn-hint" onclick="showHint(4)">
+                            <span>💡</span> Pista
+                        </button>
+                        <button class="btn-solution" onclick="showSolution(4)">
+                            <span>📖</span> Solución
+                        </button>
+                    </div>
+                    
+                    <div id="feedback4" class="feedback"></div>
+                    <div id="hint4" class="hint">
+                        <p><strong>Pista:</strong> Para una esfera con carga volumétrica, solo la carga dentro del radio r contribuye al campo en ese punto.</p>
+                    </div>
+                    <div id="solution4" class="solution">
+                        <p><strong>Solución Completa:</strong></p>
+                        <p>Para r < R: E = (k × Q × r) / R³</p>
+                        <p>k = 9 × 10⁹ N·m²/C², Q = 10 × 10⁻⁶ C, R = 0.15 m, r = 0.10 m</p>
+                        <p>E = (9 × 10⁹ × 10 × 10⁻⁶ × 0.10) / (0.15)³ = 2.67 × 10⁶ N/C</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problema 5 -->
+            <div class="problem-card">
+                <div class="problem-header">
+                    <div class="problem-title">Problema 5: Cascarón Esférico</div>
+                    <div class="difficulty hard">Difícil</div>
+                </div>
+                <div class="problem-content">
+                    <p class="problem-text">Un cascarón esférico de radio interno a = 5 cm y radio externo b = 10 cm tiene una carga total Q = 8 μC distribuida uniformemente en su volumen.</p>
+                    <div class="problem-image">
+                        <div class="diagram">
+                            ○ Cascarón esférico<br>
+                            Radio interno a = 5 cm<br>
+                            Radio externo b = 10 cm<br>
+                            Carga Q = 8 μC
+                        </div>
+                    </div>
+                    <p class="problem-text">Calcula el campo eléctrico a una distancia r = 7 cm del centro.</p>
+                    <div class="formula">E = ? (N/C)</div>
+                    
+                    <div class="input-group">
+                        <label for="answer5">Tu respuesta (en N/C):</label>
+                        <input type="number" id="answer5" step="0.1" placeholder="Ingresa el valor numérico">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-check" onclick="checkAnswer(5)">
+                            <span>✓</span> Verificar
+                        </button>
+                        <button class="btn-hint" onclick="showHint(5)">
+                            <span>💡</span> Pista
+                        </button>
+                        <button class="btn-solution" onclick="showSolution(5)">
+                            <span>📖</span> Solución
+                        </button>
+                    </div>
+                    
+                    <div id="feedback5" class="feedback"></div>
+                    <div id="hint5" class="hint">
+                        <p><strong>Pista:</strong> Para a < r < b, solo la carga dentro del radio r contribuye al campo. Calcula primero la densidad volumétrica de carga.</p>
+                    </div>
+                    <div id="solution5" class="solution">
+                        <p><strong>Solución Completa:</strong></p>
+                        <p>Volumen del cascarón: V = (4/3)π(b³ - a³)</p>
+                        <p>Densidad de carga: ρ = Q / V</p>
+                        <p>Carga encerrada hasta r: Q_enc = ρ × (4/3)π(r³ - a³)</p>
+                        <p>Campo eléctrico: E = k × Q_enc / r²</p>
+                        <p>Resultado: E ≈ 1.15 × 10⁶ N/C</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Problema 6 -->
+            <div class="problem-card">
+                <div class="problem-header">
+                    <div class="problem-title">Problema 6: Cilindro Cargado</div>
+                    <div class="difficulty hard">Difícil</div>
+                </div>
+                <div class="problem-content">
+                    <p class="problem-text">Un cilindro infinito de radio R = 8 cm tiene una densidad volumétrica de carga uniforme ρ = 5 μC/m³.</p>
+                    <div class="problem-image">
+                        <div class="diagram">
+                            █ Cilindro infinito<br>
+                            Radio R = 8 cm<br>
+                            Densidad ρ = 5 μC/m³
+                        </div>
+                    </div>
+                    <p class="problem-text">Calcula el campo eléctrico a una distancia r = 12 cm del eje del cilindro.</p>
+                    <div class="formula">E = ? (N/C)</div>
+                    
+                    <div class="input-group">
+                        <label for="answer6">Tu respuesta (en N/C):</label>
+                        <input type="number" id="answer6" step="0.1" placeholder="Ingresa el valor numérico">
+                    </div>
+                    
+                    <div class="button-group">
+                        <button class="btn-check" onclick="checkAnswer(6)">
+                            <span>✓</span> Verificar
+                        </button>
+                        <button class="btn-hint" onclick="showHint(6)">
+                            <span>💡</span> Pista
+                        </button>
+                        <button class="btn-solution" onclick="showSolution(6)">
+                            <span>📖</span> Solución
+                        </button>
+                    </div>
+                    
+                    <div id="feedback6" class="feedback"></div>
+                    <div id="hint6" class="hint">
+                        <p><strong>Pista:</strong> Usa una superficie gaussiana cilíndrica coaxial. Para r > R, toda la carga del cilindro está encerrada.</p>
+                    </div>
+                    <div id="solution6" class="solution">
+                        <p><strong>Solución Completa:</strong></p>
+                        <p>Para r > R: E = (ρ × π × R² × L) / (2 × π × r × L × ε₀) = (ρ × R²) / (2 × ε₀ × r)</p>
+                        <p>ρ = 5 × 10⁻⁶ C/m³, R = 0.08 m, r = 0.12 m, ε₀ = 8.85 × 10⁻¹² C²/N·m²</p>
+                        <p>E = (5 × 10⁻⁶ × (0.08)²) / (2 × 8.85 × 10⁻¹² × 0.12) = 1506 N/C</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="theory-review">
+            <h2>Repaso Teórico - Ley de Gauss</h2>
+            
+            <div class="concept">
+                <h3>Concepto Fundamental</h3>
+                <p>La Ley de Gauss establece que el flujo eléctrico neto a través de cualquier superficie cerrada es igual a la carga encerrada dividida por la permitividad del vacío:</p>
+                <div class="formula">∮<b>E</b> · d<b>A</b> = Q<sub>enc</sub> / ε₀</div>
+            </div>
+            
+            <div class="concept">
+                <h3>Estrategias para Resolver Problemas</h3>
+                <p>1. <strong>Identificar la simetría</strong> del problema (esférica, cilíndrica o plana)</p>
+                <p>2. <strong>Elegir una superficie gaussiana</strong> que aproveche la simetría</p>
+                <p>3. <strong>Calcular el flujo eléctrico</strong> a través de la superficie</p>
+                <p>4. <strong>Determinar la carga encerrada</strong> Q<sub>enc</sub></p>
+                <p>5. <strong>Aplicar la Ley de Gauss</strong> y resolver para el campo eléctrico</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Problemas Interactivos de Física - Ley de Gauss | ε₀ = 8.85 × 10⁻¹² C²/N·m² | k = 9 × 10⁹ N·m²/C²</p>
+        </footer>
+    </div>
+
+    <script>
+        // Constantes físicas
+        const ε0 = 8.85e-12;
+        const k = 9e9;
+        
+        // Respuestas correctas
+        const correctAnswers = {
+            1: 2e6,    // Esfera conductora
+            2: 2.7e5,  // Línea de carga
+            3: 452,    // Plano infinito
+            4: 2.67e6, // Esfera no conductora
+            5: 1.15e6, // Cascarón esférico
+            6: 1506    // Cilindro cargado
+        };
+        
+        // Tolerancia para respuestas numéricas (5%)
+        const tolerance = 0.05;
+        
+        // Estado de problemas resueltos
+        let solvedProblems = {
+            easy: 0,
+            medium: 0,
+            hard: 0,
+            total: 0
+        };
+        
+        // Función para verificar respuestas
+        function checkAnswer(problemNumber) {
+            const userAnswer = parseFloat(document.getElementById(`answer${problemNumber}`).value);
+            const correctAnswer = correctAnswers[problemNumber];
+            const feedback = document.getElementById(`feedback${problemNumber}`);
+            
+            if (isNaN(userAnswer)) {
+                feedback.textContent = "Por favor, ingresa un número válido.";
+                feedback.className = "feedback incorrect";
+                feedback.style.display = "block";
+                return;
+            }
+            
+            const lowerBound = correctAnswer * (1 - tolerance);
+            const upperBound = correctAnswer * (1 + tolerance);
+            
+            if (userAnswer >= lowerBound && userAnswer <= upperBound) {
+                feedback.textContent = "¡Correcto! Has aplicado correctamente la Ley de Gauss.";
+                feedback.className = "feedback correct";
+                feedback.style.display = "block";
+                
+                // Actualizar progreso
+                updateProgress(problemNumber, true);
+            } else {
+                feedback.textContent = `Incorrecto. La respuesta correcta es aproximadamente ${correctAnswer.toExponential(2)} N/C.`;
+                feedback.className = "feedback incorrect";
+                feedback.style.display = "block";
+                
+                updateProgress(problemNumber, false);
+            }
+        }
+        
+        // Función para mostrar pistas
+        function showHint(problemNumber) {
+            const hint = document.getElementById(`hint${problemNumber}`);
+            hint.style.display = hint.style.display === "block" ? "none" : "block";
+        }
+        
+        // Función para mostrar soluciones
+        function showSolution(problemNumber) {
+            const solution = document.getElementById(`solution${problemNumber}`);
+            solution.style.display = solution.style.display === "block" ? "none" : "block";
+        }
+        
+        // Función para actualizar el progreso
+        function updateProgress(problemNumber, isCorrect) {
+            if (isCorrect) {
+                // Determinar la dificultad del problema
+                let difficulty;
+                if (problemNumber <= 2) difficulty = "easy";
+                else if (problemNumber <= 4) difficulty = "medium";
+                else difficulty = "hard";
+                
+                // Solo contar una vez por problema
+                if (!solvedProblems[`problem${problemNumber}`]) {
+                    solvedProblems[difficulty]++;
+                    solvedProblems.total++;
+                    solvedProblems[`problem${problemNumber}`] = true;
+                    
+                    // Actualizar la interfaz
+                    document.getElementById("progressText").textContent = 
+                        `${solvedProblems.total}/6 problemas resueltos`;
+                    
+                    document.getElementById("progressFill").style.width = 
+                        `${(solvedProblems.total / 6) * 100}%`;
+                    
+                    document.getElementById("easyCount").textContent = solvedProblems.easy;
+                    document.getElementById("mediumCount").textContent = solvedProblems.medium;
+                    document.getElementById("hardCount").textContent = solvedProblems.hard;
+                    
+                    // Agregar badge de completado al problema
+                    const problemHeader = document.querySelector(`.problem-card:nth-child(${problemNumber}) .problem-header`);
+                    if (!problemHeader.querySelector('.completed-badge')) {
+                        const badge = document.createElement('span');
+                        badge.className = 'completed-badge';
+                        badge.innerHTML = '✓ Completado';
+                        problemHeader.appendChild(badge);
+                    }
+                }
+            }
+        }
+        
+        // Inicializar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar el progreso inicial
+            document.getElementById("progressText").textContent = "0/6 problemas resueltos";
+            document.getElementById("progressFill").style.width = "0%";
+            document.getElementById("easyCount").textContent = "0";
+            document.getElementById("mediumCount").textContent = "0";
+            document.getElementById("hardCount").textContent = "0";
+        });
+    </script>
+</body>
+</html>
