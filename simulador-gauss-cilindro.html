@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador - Cilindro Infinito Cargado</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: #ecf0f1;
+        }
+
+        .gauss-law {
+            font-family: 'Cambria Math', serif;
+            font-size: 2.2rem;
+            text-align: center;
+            margin: 25px 0;
+            padding: 25px;
+            background: rgba(255, 126, 95, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 126, 95, 0.3);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        .simulator-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        @media (max-width: 1100px) {
+            .simulator-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .visualization-section {
+            background: rgba(10, 15, 40, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .canvas-container {
+            background: #0a1020;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        #cylinderCanvas {
+            width: 100%;
+            display: block;
+            background: #0a1020;
+        }
+
+        .graph-container {
+            background: #0a1020;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            height: 300px;
+        }
+
+        #graphCanvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .controls-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            height: fit-content;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff7e5f;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: #feb47b;
+        }
+
+        .control-group {
+            margin: 20px 0;
+        }
+
+        .slider-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ff7e5f;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(255, 126, 95, 0.5);
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .checkbox-item input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+
+        .info-panel {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff7e5f;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        .theory-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 35px;
+            margin: 40px 0;
+        }
+
+        .formula {
+            font-family: 'Cambria Math', serif;
+            font-size: 1.4rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(255, 126, 95, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 126, 95, 0.3);
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+            justify-content: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .coordinate-display {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            pointer-events: none;
+        }
+
+        .probe-indicator {
+            position: absolute;
+            background: rgba(46, 204, 113, 0.9);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            pointer-events: none;
+            transform: translate(-50%, -100%);
+        }
+
+        .charge-type-selector {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .charge-type-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .charge-type-btn.active {
+            border-color: #ff7e5f;
+            background: rgba(255, 126, 95, 0.2);
+        }
+
+        .charge-type-btn.linear.active {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.2);
+        }
+
+        .charge-type-btn.volumetric.active {
+            border-color: #3498db;
+            background: rgba(52, 152, 219, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulador de Cilindro Infinito Cargado</h1>
+            <p class="subtitle">Visualiza el campo eléctrico de un cilindro infinito cargado usando la Ley de Gauss. Experimenta con diferentes configuraciones de carga y observa la simetría cilíndrica.</p>
+            
+            <div class="gauss-law">
+                ∮<b>E</b> · d<b>A</b> = Q<sub>enc</sub> / ε₀
+            </div>
+
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="modelos_gauss.html" class="nav-btn">📊 Modelos de Gauss</a>
+                <a href="simulador_esfera.html" class="nav-btn">🔴 Esfera Cargada</a>
+                <a href="problemas_gauss.html" class="nav-btn">🎯 Problemas</a>
+            </div>
+        </header>
+
+        <div class="simulator-container">
+            <div class="visualization-section">
+                <h2>Visualización 2D - Vista Transversal</h2>
+                <div class="canvas-container">
+                    <div class="coordinate-display" id="coordinates">Distancia: 0 m</div>
+                    <canvas id="cylinderCanvas" width="800" height="500"></canvas>
+                </div>
+                
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #e74c3c;"></div>
+                        <span>Cilindro cargado</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(255, 126, 95, 0.6);"></div>
+                        <span>Líneas de campo</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: #2ecc71;"></div>
+                        <span>Punto de prueba</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color" style="background: rgba(52, 152, 219, 0.6);"></div>
+                        <span>Superficie gaussiana</span>
+                    </div>
+                </div>
+
+                <h3>Gráfico Campo vs Distancia</h3>
+                <div class="graph-container">
+                    <canvas id="graphCanvas"></canvas>
+                </div>
+            </div>
+
+            <div class="controls-section">
+                <h2>Controles</h2>
+                
+                <div class="control-group">
+                    <h3>Propiedades del Cilindro</h3>
+                    <div class="slider-container">
+                        <div class="slider-label">
+                            <span>Radio del cilindro (R):</span>
+                            <span id="radiusValue">0.3 m</span>
+                        </div>
+                        <input type="range" id="cylinderRadius" min="0.1" max="1" step="0.05" value="0.3">
+                    </div>
+                    
+                    <div class="charge-type-selector">
+                        <div class="charge-type-btn linear active" id="linearChargeBtn">
+                            Carga Lineal
+                        </div>
+                        <div class="charge-type-btn volumetric" id="volumetricChargeBtn">
+                            Carga Volumétrica
+                        </div>
+                    </div>
+
+                    <div class="slider-container" id="linearChargeContainer">
+                        <div class="slider-label">
+                            <span>Densidad lineal (λ):</span>
+                            <span id="linearChargeValue">+2 μC/m</span>
+                        </div>
+                        <input type="range" id="linearCharge" min="-5" max="5" step="0.1" value="2">
+                    </div>
+
+                    <div class="slider-container" id="volumetricChargeContainer" style="display: none;">
+                        <div class="slider-label">
+                            <span>Densidad volumétrica (ρ):</span>
+                            <span id="volumetricChargeValue">+1 μC/m³</span>
+                        </div>
+                        <input type="range" id="volumetricCharge" min="-3" max="3" step="0.1" value="1">
+                    </div>
+                </div>
+
+                <div class="control-group">
+                    <h3>Visualización</h3>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="showFieldLines" checked>
+                            <span>Mostrar líneas de campo</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="showGaussianSurface">
+                            <span>Mostrar superficie gaussiana</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="showElectricField">
+                            <span>Mostrar vectores de campo</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="showGraph" checked>
+                            <span>Mostrar gráfico E vs r</span>
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="showCrossSection">
+                            <span>Mostrar sección transversal</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn-primary" id="addProbe">
+                        <span>📍</span> Agregar Punto de Prueba
+                    </button>
+                    <button class="btn-secondary" id="clearProbes">
+                        <span>🗑️</span> Limpiar Puntos
+                    </button>
+                    <button class="btn-secondary" id="resetView">
+                        <span>🔄</span> Reiniciar Vista
+                    </button>
+                </div>
+
+                <div class="info-panel">
+                    <h3>Información del Campo</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-value" id="fieldValue">0</span>
+                            <span class="stat-label">Campo (N/C)</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="distanceValue">0</span>
+                            <span class="stat-label">Distancia (m)</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="fluxValue">0</span>
+                            <span class="stat-label">Flujo (N·m²/C)</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="chargeDensityValue">0</span>
+                            <span class="stat-label">λ/ρ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="theory-section">
+                    <h3>Fórmulas Clave</h3>
+                    <div class="formula">
+                        Carga lineal (r > R): E(r) = λ / (2πϵ₀r)
+                    </div>
+                    <div class="formula">
+                        Carga lineal (r < R): E(r) = λr / (2πϵ₀R²)
+                    </div>
+                    <div class="formula">
+                        Carga volumétrica (r > R): E(r) = ρπR² / (2πϵ₀r)
+                    </div>
+                    <div class="formula">
+                        Carga volumétrica (r < R): E(r) = ρr / (2ϵ₀)
+                    </div>
+                    <p style="text-align: center; color: #bdc3c7; margin-top: 15px;">
+                        ϵ₀ = 8.85 × 10⁻¹² C²/N·m²<br>
+                        Campo siempre perpendicular al eje
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Simulador de Cilindro Infinito Cargado - Ley de Gauss © 2024</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                Constantes físicas: ε₀ = 8.85 × 10⁻¹² C²/N·m²
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Constantes físicas
+        const ε0 = 8.85e-12; // C²/N·m²
+
+        // Elementos del DOM
+        const cylinderCanvas = document.getElementById('cylinderCanvas');
+        const graphCanvas = document.getElementById('graphCanvas');
+        const ctx = cylinderCanvas.getContext('2d');
+        const graphCtx = graphCanvas.getContext('2d');
+        const coordinates = document.getElementById('coordinates');
+
+        // Configuración del cilindro
+        let cylinderConfig = {
+            radius: 0.3, // metros
+            chargeType: 'linear', // 'linear' o 'volumetric'
+            linearCharge: 2e-6, // C/m (2 μC/m)
+            volumetricCharge: 1e-6, // C/m³ (1 μC/m³)
+            x: 400,
+            y: 250
+        };
+
+        // Puntos de prueba
+        let probePoints = [];
+        let selectedProbe = null;
+        let isDragging = false;
+
+        // Elementos de control
+        const cylinderRadius = document.getElementById('cylinderRadius');
+        const linearChargeBtn = document.getElementById('linearChargeBtn');
+        const volumetricChargeBtn = document.getElementById('volumetricChargeBtn');
+        const linearChargeContainer = document.getElementById('linearChargeContainer');
+        const volumetricChargeContainer = document.getElementById('volumetricChargeContainer');
+        const linearCharge = document.getElementById('linearCharge');
+        const volumetricCharge = document.getElementById('volumetricCharge');
+        const radiusValue = document.getElementById('radiusValue');
+        const linearChargeValue = document.getElementById('linearChargeValue');
+        const volumetricChargeValue = document.getElementById('volumetricChargeValue');
+        const showFieldLines = document.getElementById('showFieldLines');
+        const showGaussianSurface = document.getElementById('showGaussianSurface');
+        const showElectricField = document.getElementById('showElectricField');
+        const showGraph = document.getElementById('showGraph');
+        const showCrossSection = document.getElementById('showCrossSection');
+        const addProbe = document.getElementById('addProbe');
+        const clearProbes = document.getElementById('clearProbes');
+        const resetView = document.getElementById('resetView');
+        const fieldValue = document.getElementById('fieldValue');
+        const distanceValue = document.getElementById('distanceValue');
+        const fluxValue = document.getElementById('fluxValue');
+        const chargeDensityValue = document.getElementById('chargeDensityValue');
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSimulator();
+            setupEventListeners();
+            draw();
+            drawGraph();
+        });
+
+        function initializeSimulator() {
+            // Configurar canvas del gráfico
+            graphCanvas.width = graphCanvas.parentElement.clientWidth;
+            graphCanvas.height = 300;
+
+            // Actualizar valores iniciales
+            updateSliderValues();
+        }
+
+        function setupEventListeners() {
+            // Eventos de sliders
+            cylinderRadius.addEventListener('input', function() {
+                cylinderConfig.radius = parseFloat(this.value);
+                radiusValue.textContent = `${this.value} m`;
+                updateSimulation();
+            });
+
+            linearCharge.addEventListener('input', function() {
+                cylinderConfig.linearCharge = parseFloat(this.value) * 1e-6;
+                const sign = this.value >= 0 ? '+' : '';
+                linearChargeValue.textContent = `${sign}${this.value} μC/m`;
+                updateSimulation();
+            });
+
+            volumetricCharge.addEventListener('input', function() {
+                cylinderConfig.volumetricCharge = parseFloat(this.value) * 1e-6;
+                const sign = this.value >= 0 ? '+' : '';
+                volumetricChargeValue.textContent = `${sign}${this.value} μC/m³`;
+                updateSimulation();
+            });
+
+            // Eventos de tipo de carga
+            linearChargeBtn.addEventListener('click', function() {
+                cylinderConfig.chargeType = 'linear';
+                linearChargeBtn.classList.add('active');
+                volumetricChargeBtn.classList.remove('active');
+                linearChargeContainer.style.display = 'flex';
+                volumetricChargeContainer.style.display = 'none';
+                updateSimulation();
+            });
+
+            volumetricChargeBtn.addEventListener('click', function() {
+                cylinderConfig.chargeType = 'volumetric';
+                volumetricChargeBtn.classList.add('active');
+                linearChargeBtn.classList.remove('active');
+                linearChargeContainer.style.display = 'none';
+                volumetricChargeContainer.style.display = 'flex';
+                updateSimulation();
+            });
+
+            // Eventos de checkboxes
+            showFieldLines.addEventListener('change', updateSimulation);
+            showGaussianSurface.addEventListener('change', updateSimulation);
+            showElectricField.addEventListener('change', updateSimulation);
+            showGraph.addEventListener('change', updateSimulation);
+            showCrossSection.addEventListener('change', updateSimulation);
+
+            // Eventos de botones
+            addProbe.addEventListener('click', addProbePoint);
+            clearProbes.addEventListener('click', clearAllProbes);
+            resetView.addEventListener('click', resetSimulation);
+
+            // Eventos del canvas
+            cylinderCanvas.addEventListener('mousedown', handleCanvasClick);
+            cylinderCanvas.addEventListener('mousemove', handleCanvasMouseMove);
+            cylinderCanvas.addEventListener('mouseup', handleCanvasMouseUp);
+        }
+
+        function updateSliderValues() {
+            radiusValue.textContent = `${cylinderRadius.value} m`;
+            const linearSign = linearCharge.value >= 0 ? '+' : '';
+            linearChargeValue.textContent = `${linearSign}${linearCharge.value} μC/m`;
+            const volumetricSign = volumetricCharge.value >= 0 ? '+' : '';
+            volumetricChargeValue.textContent = `${volumetricSign}${volumetricCharge.value} μC/m³`;
+        }
+
+        function updateSimulation() {
+            draw();
+            if (showGraph.checked) {
+                drawGraph();
+            }
+            updateFieldInfo();
+        }
+
+        // Cálculo del campo eléctrico para cilindro
+        function calculateElectricField(x, y) {
+            const dx = x - cylinderConfig.x;
+            const dy = y - cylinderConfig.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance === 0) return { magnitude: 0, angle: 0 };
+            
+            let magnitude;
+            const r = distance / 100; // Convertir píxeles a metros
+            
+            if (cylinderConfig.chargeType === 'linear') {
+                // Carga lineal
+                if (r > cylinderConfig.radius) {
+                    // Fuera del cilindro
+                    magnitude = Math.abs(cylinderConfig.linearCharge) / (2 * Math.PI * ε0 * r);
+                } else {
+                    // Dentro del cilindro
+                    magnitude = (Math.abs(cylinderConfig.linearCharge) * r) / 
+                               (2 * Math.PI * ε0 * cylinderConfig.radius * cylinderConfig.radius);
+                }
+            } else {
+                // Carga volumétrica
+                if (r > cylinderConfig.radius) {
+                    // Fuera del cilindro
+                    magnitude = (cylinderConfig.volumetricCharge * Math.PI * cylinderConfig.radius * cylinderConfig.radius) / 
+                               (2 * Math.PI * ε0 * r);
+                } else {
+                    // Dentro del cilindro
+                    magnitude = (cylinderConfig.volumetricCharge * r) / (2 * ε0);
+                }
+            }
+            
+            // Campo siempre radial (perpendicular al eje)
+            const angle = Math.atan2(dy, dx);
+            return { magnitude, angle, distance: r };
+        }
+
+        function draw() {
+            // Limpiar canvas
+            ctx.fillStyle = '#0a1020';
+            ctx.fillRect(0, 0, cylinderCanvas.width, cylinderCanvas.height);
+            
+            // Dibujar cuadrícula
+            drawGrid();
+            
+            // Dibujar superficie gaussiana si está activada
+            if (showGaussianSurface.checked) {
+                drawGaussianSurface();
+            }
+            
+            // Dibujar líneas de campo si están activadas
+            if (showFieldLines.checked) {
+                drawFieldLines();
+            }
+            
+            // Dibujar el cilindro
+            drawCylinder();
+            
+            // Dibujar vectores de campo si están activados
+            if (showElectricField.checked) {
+                drawFieldVectors();
+            }
+            
+            // Dibujar puntos de prueba
+            drawProbePoints();
+        }
+
+        function drawGrid() {
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            const gridSize = 50;
+
+            for (let x = 0; x <= cylinderCanvas.width; x += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, cylinderCanvas.height);
+                ctx.stroke();
+            }
+
+            for (let y = 0; y <= cylinderCanvas.height; y += gridSize) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(cylinderCanvas.width, y);
+                ctx.stroke();
+            }
+        }
+
+        function drawCylinder() {
+            const radiusPixels = cylinderConfig.radius * 100; // Escala: 1m = 100px
+            
+            // Dibujar sección transversal del cilindro
+            if (showCrossSection.checked) {
+                ctx.fillStyle = cylinderConfig.chargeType === 'linear' ? 
+                    'rgba(231, 76, 60, 0.3)' : 'rgba(52, 152, 219, 0.3)';
+                ctx.beginPath();
+                ctx.arc(cylinderConfig.x, cylinderConfig.y, radiusPixels, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Borde del cilindro
+            ctx.strokeStyle = cylinderConfig.chargeType === 'linear' ? '#e74c3c' : '#3498db';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(cylinderConfig.x, cylinderConfig.y, radiusPixels, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            // Símbolo de carga y tipo
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            const chargeSign = cylinderConfig.chargeType === 'linear' ? 
+                (cylinderConfig.linearCharge > 0 ? '+' : '−') : 
+                (cylinderConfig.volumetricCharge > 0 ? '+' : '−');
+            
+            ctx.fillText(`${chargeSign} ${cylinderConfig.chargeType === 'linear' ? 'λ' : 'ρ'}`, 
+                        cylinderConfig.x, cylinderConfig.y);
+        }
+
+        function drawFieldLines() {
+            ctx.strokeStyle = 'rgba(255, 126, 95, 0.4)';
+            ctx.lineWidth = 1.5;
+            
+            const numLines = 16;
+            for (let i = 0; i < numLines; i++) {
+                const angle = (i / numLines) * Math.PI * 2;
+                drawFieldLine(angle);
+            }
+        }
+
+        function drawFieldLine(startAngle) {
+            const stepSize = 3;
+            const maxSteps = 150;
+            
+            // Comenzar justo fuera del cilindro
+            const startRadius = cylinderConfig.radius * 100 + 5;
+            let x = cylinderConfig.x + Math.cos(startAngle) * startRadius;
+            let y = cylinderConfig.y + Math.sin(startAngle) * startRadius;
+            
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            
+            for (let i = 0; i < maxSteps; i++) {
+                const field = calculateElectricField(x, y);
+                if (field.magnitude < 1e-5) break;
+                
+                // Dirección radial hacia afuera
+                const direction = (cylinderConfig.chargeType === 'linear' ? 
+                    cylinderConfig.linearCharge : cylinderConfig.volumetricCharge) > 0 ? 1 : -1;
+                
+                x += Math.cos(field.angle) * stepSize * direction;
+                y += Math.sin(field.angle) * stepSize * direction;
+                
+                if (x < 0 || x > cylinderCanvas.width || y < 0 || y > cylinderCanvas.height) break;
+                
+                ctx.lineTo(x, y);
+            }
+            
+            ctx.stroke();
+        }
+
+        function drawFieldVectors() {
+            const step = 70;
+            
+            for (let x = 60; x < cylinderCanvas.width; x += step) {
+                for (let y = 60; y < cylinderCanvas.height; y += step) {
+                    const field = calculateElectricField(x, y);
+                    
+                    if (field.magnitude > 1e-5) {
+                        const scale = 25;
+                        const endX = x + Math.cos(field.angle) * scale;
+                        const endY = y + Math.sin(field.angle) * scale;
+                        
+                        ctx.strokeStyle = '#f39c12';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(endX, endY);
+                        ctx.stroke();
+                        
+                        // Punta de flecha
+                        const arrowAngle = Math.atan2(endY - y, endX - x);
+                        ctx.beginPath();
+                        ctx.moveTo(endX, endY);
+                        ctx.lineTo(endX - 6 * Math.cos(arrowAngle - Math.PI/6), 
+                                  endY - 6 * Math.sin(arrowAngle - Math.PI/6));
+                        ctx.lineTo(endX - 6 * Math.cos(arrowAngle + Math.PI/6), 
+                                  endY - 6 * Math.sin(arrowAngle + Math.PI/6));
+                        ctx.closePath();
+                        ctx.fillStyle = '#f39c12';
+                        ctx.fill();
+                    }
+                }
+            }
+        }
+
+        function drawGaussianSurface() {
+            const radius = cylinderConfig.radius * 100 * 1.8;
+            
+            ctx.strokeStyle = 'rgba(52, 152, 219, 0.6)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.arc(cylinderConfig.x, cylinderConfig.y, radius, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawProbePoints() {
+            probePoints.forEach((probe, index) => {
+                const field = calculateElectricField(probe.x, probe.y);
+                
+                // Punto
+                ctx.fillStyle = '#2ecc71';
+                ctx.beginPath();
+                ctx.arc(probe.x, probe.y, 6, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Borde si está seleccionado
+                if (probe.selected) {
+                    ctx.strokeStyle = '#f1c40f';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+                
+                // Indicador de campo
+                if (field.magnitude > 0) {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'probe-indicator';
+                    indicator.style.left = `${probe.x}px`;
+                    indicator.style.top = `${probe.y}px`;
+                    indicator.textContent = `E=${field.magnitude.toExponential(1)} N/C`;
+                    
+                    // Limpiar indicadores anteriores
+                    document.querySelectorAll('.probe-indicator').forEach(el => el.remove());
+                    cylinderCanvas.parentElement.appendChild(indicator);
+                }
+            });
+        }
+
+        function drawGraph() {
+            graphCtx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+            
+            // Ejes
+            graphCtx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
+            graphCtx.lineWidth = 1;
+            
+            // Eje Y
+            graphCtx.beginPath();
+            graphCtx.moveTo(50, 50);
+            graphCtx.lineTo(50, graphCanvas.height - 50);
+            graphCtx.stroke();
+            
+            // Eje X
+            graphCtx.beginPath();
+            graphCtx.moveTo(50, graphCanvas.height - 50);
+            graphCtx.lineTo(graphCanvas.width - 50, graphCanvas.height - 50);
+            graphCtx.stroke();
+            
+            // Etiquetas
+            graphCtx.fillStyle = 'white';
+            graphCtx.font = '12px Arial';
+            graphCtx.fillText('E (N/C)', 10, 30);
+            graphCtx.fillText('r (m)', graphCanvas.width - 30, graphCanvas.height - 20);
+            
+            // Dibujar curva E vs r
+            graphCtx.strokeStyle = cylinderConfig.chargeType === 'linear' ? '#e74c3c' : '#3498db';
+            graphCtx.lineWidth = 3;
+            graphCtx.beginPath();
+            
+            const maxR = 2.0; // metros
+            const scaleX = (graphCanvas.width - 100) / maxR;
+            
+            // Calcular E máximo para escalar el gráfico
+            let maxE;
+            if (cylinderConfig.chargeType === 'linear') {
+                maxE = cylinderConfig.linearCharge / (2 * Math.PI * ε0 * cylinderConfig.radius);
+            } else {
+                maxE = (cylinderConfig.volumetricCharge * cylinderConfig.radius) / (2 * ε0);
+            }
+            
+            const scaleY = (graphCanvas.height - 100) / maxE;
+            
+            for (let r = 0.05; r <= maxR; r += 0.02) {
+                let E;
+                if (cylinderConfig.chargeType === 'linear') {
+                    if (r > cylinderConfig.radius) {
+                        E = cylinderConfig.linearCharge / (2 * Math.PI * ε0 * r);
+                    } else {
+                        E = (cylinderConfig.linearCharge * r) / 
+                            (2 * Math.PI * ε0 * cylinderConfig.radius * cylinderConfig.radius);
+                    }
+                } else {
+                    if (r > cylinderConfig.radius) {
+                        E = (cylinderConfig.volumetricCharge * Math.PI * cylinderConfig.radius * cylinderConfig.radius) / 
+                            (2 * Math.PI * ε0 * r);
+                    } else {
+                        E = (cylinderConfig.volumetricCharge * r) / (2 * ε0);
+                    }
+                }
+                
+                const x = 50 + r * scaleX;
+                const y = graphCanvas.height - 50 - E * scaleY;
+                
+                if (r === 0.05) {
+                    graphCtx.moveTo(x, y);
+                } else {
+                    graphCtx.lineTo(x, y);
+                }
+            }
+            
+            graphCtx.stroke();
+            
+            // Línea vertical en r = R
+            graphCtx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+            graphCtx.setLineDash([5, 5]);
+            graphCtx.beginPath();
+            const rLineX = 50 + cylinderConfig.radius * scaleX;
+            graphCtx.moveTo(rLineX, 50);
+            graphCtx.lineTo(rLineX, graphCanvas.height - 50);
+            graphCtx.stroke();
+            graphCtx.setLineDash([]);
+            
+            // Etiqueta r = R
+            graphCtx.fillStyle = 'white';
+            graphCtx.fillText('r = R', rLineX - 15, graphCanvas.height - 30);
+        }
+
+        function addProbePoint() {
+            // Agregar punto en una posición aleatoria interesante
+            const angle = Math.random() * Math.PI * 2;
+            const distance = cylinderConfig.radius * 100 * (0.5 + Math.random() * 2);
+            
+            const probe = {
+                x: cylinderConfig.x + Math.cos(angle) * distance,
+                y: cylinderConfig.y + Math.sin(angle) * distance,
+                selected: false
+            };
+            
+            probePoints.push(probe);
+            updateSimulation();
+        }
+
+        function clearAllProbes() {
+            probePoints = [];
+            document.querySelectorAll('.probe-indicator').forEach(el => el.remove());
+            updateSimulation();
+        }
+
+        function resetSimulation() {
+            cylinderConfig.radius = 0.3;
+            cylinderConfig.chargeType = 'linear';
+            cylinderConfig.linearCharge = 2e-6;
+            cylinderConfig.volumetricCharge = 1e-6;
+            cylinderRadius.value = 0.3;
+            linearCharge.value = 2;
+            volumetricCharge.value = 1;
+            probePoints = [];
+            
+            linearChargeBtn.classList.add('active');
+            volumetricChargeBtn.classList.remove('active');
+            linearChargeContainer.style.display = 'flex';
+            volumetricChargeContainer.style.display = 'none';
+            
+            updateSliderValues();
+            updateSimulation();
+        }
+
+        function updateFieldInfo() {
+            if (probePoints.length > 0) {
+                const lastProbe = probePoints[probePoints.length - 1];
+                const field = calculateElectricField(lastProbe.x, lastProbe.y);
+                
+                fieldValue.textContent = field.magnitude.toExponential(2);
+                distanceValue.textContent = field.distance.toFixed(2);
+                
+                // Flujo (simplificado para superficie cilíndrica)
+                const flux = field.magnitude * 2 * Math.PI * field.distance; // Por unidad de longitud
+                fluxValue.textContent = flux.toExponential(2);
+                
+                // Densidad de carga actual
+                if (cylinderConfig.chargeType === 'linear') {
+                    chargeDensityValue.textContent = `${(cylinderConfig.linearCharge * 1e6).toFixed(1)} μC/m`;
+                } else {
+                    chargeDensityValue.textContent = `${(cylinderConfig.volumetricCharge * 1e6).toFixed(1)} μC/m³`;
+                }
+            }
+        }
+
+        // Manejo de eventos del canvas
+        function handleCanvasClick(event) {
+            const rect = cylinderCanvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            // Verificar si se hizo clic en un punto de prueba
+            selectedProbe = null;
+            for (let i = probePoints.length - 1; i >= 0; i--) {
+                const probe = probePoints[i];
+                const dx = probe.x - x;
+                const dy = probe.y - y;
+                if (Math.sqrt(dx * dx + dy * dy) <= 6) {
+                    selectedProbe = probe;
+                    probe.selected = true;
+                    isDragging = true;
+                    break;
+                }
+            }
+            
+            // Si no se hizo clic en un punto existente, agregar nuevo
+            if (!selectedProbe) {
+                const newProbe = { x, y, selected: true };
+                probePoints.push(newProbe);
+                selectedProbe = newProbe;
+                isDragging = true;
+            }
+            
+            updateSimulation();
+        }
+
+        function handleCanvasMouseMove(event) {
+            const rect = cylinderCanvas.getBoundingClientRect();
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+            
+            // Actualizar coordenadas
+            const worldX = (x - cylinderConfig.x) / 100;
+            const worldY = (y - cylinderConfig.y) / 100;
+            const distance = Math.sqrt(worldX * worldX + worldY * worldY);
+            coordinates.textContent = `Distancia: ${distance.toFixed(2)} m`;
+            
+            // Arrastrar punto seleccionado
+            if (isDragging && selectedProbe) {
+                selectedProbe.x = x;
+                selectedProbe.y = y;
+                updateSimulation();
+            }
+        }
+
+        function handleCanvasMouseUp() {
+            isDragging = false;
+            if (selectedProbe) {
+                selectedProbe.selected = false;
+                selectedProbe = null;
+                updateSimulation();
+            }
+        }
+    </script>
+</body>
+</html>

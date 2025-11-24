@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelos de la Ley de Gauss</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: #ecf0f1;
+        }
+
+        .gauss-law {
+            font-family: 'Cambria Math', serif;
+            font-size: 2.2rem;
+            text-align: center;
+            margin: 25px 0;
+            padding: 25px;
+            background: rgba(255, 126, 95, 0.1);
+            border-radius: 15px;
+            border: 2px solid rgba(255, 126, 95, 0.3);
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .model-card {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .model-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(255, 126, 95, 0.3);
+            border-color: rgba(255, 126, 95, 0.3);
+        }
+
+        .model-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .model-icon {
+            font-size: 3rem;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 126, 95, 0.2);
+            border-radius: 50%;
+            border: 2px solid rgba(255, 126, 95, 0.5);
+        }
+
+        .model-title {
+            font-size: 1.8rem;
+            color: #ff7e5f;
+            font-weight: bold;
+        }
+
+        .model-description {
+            color: #bdc3c7;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .model-features {
+            margin: 20px 0;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 8px 0;
+            color: #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            color: #2ecc71;
+            font-weight: bold;
+        }
+
+        .model-formula {
+            font-family: 'Cambria Math', serif;
+            font-size: 1.3rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 126, 95, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 126, 95, 0.3);
+        }
+
+        .model-visualization {
+            background: rgba(10, 15, 40, 0.8);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .diagram {
+            font-family: 'Courier New', monospace;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            line-height: 1.4;
+            color: #bdc3c7;
+        }
+
+        .model-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .model-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        }
+
+        .theory-section {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 50px 0;
+        }
+
+        .theory-section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ff7e5f;
+            font-size: 2.5rem;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .concept-card {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 4px solid #ff7e5f;
+        }
+
+        .concept-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: #feb47b;
+        }
+
+        .concept-description {
+            color: #bdc3c7;
+            line-height: 1.6;
+        }
+
+        .applications {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 35px;
+            margin: 40px 0;
+        }
+
+        .applications h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2ecc71;
+            font-size: 2.2rem;
+        }
+
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .app-card:hover {
+            transform: scale(1.05);
+        }
+
+        .app-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .app-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: #feb47b;
+        }
+
+        .app-description {
+            color: #bdc3c7;
+            font-size: 0.95rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .models-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .model-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        .quick-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .quick-nav-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .quick-nav-btn:hover {
+            background: rgba(255, 126, 95, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Modelos de la Ley de Gauss</h1>
+            <p class="subtitle">Explora diferentes configuraciones y aplicaciones de la Ley de Gauss en electromagnetismo. Comprende cómo la elección de superficies gaussianas simplifica el cálculo de campos eléctricos.</p>
+            
+            <div class="gauss-law">
+                ∮<b>E</b> · d<b>A</b> = Q<sub>enc</sub> / ε₀
+            </div>
+
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="campo_electrico.html" class="nav-btn">⚡ Simulador Campo Eléctrico</a>
+                <a href="campo_magnetico.html" class="nav-btn">🧲 Simulador de campo magnetico</a>
+                <a href="problemas_ley_gauss.html" class="nav-btn">📚 Problemas Interactivos</a>
+            </div>
+
+            <div class="quick-nav">
+                <a href="#esfera" class="quick-nav-btn">Esfera</a>
+                <a href="#cilindro" class="quick-nav-btn">Cilindro</a>
+                <a href="#plano" class="quick-nav-btn">Plano</a>
+                
+                <a href="#cascaron" class="quick-nav-btn">Cascarón</a>
+                
+            </div>
+        </header>
+
+        <div class="models-grid">
+            <!-- Modelo 1: Esfera -->
+            <div class="model-card" id="esfera">
+                <div class="model-header">
+                    <div class="model-icon">🔴</div>
+                    <h2 class="model-title">Esfera Cargada</h2>
+                </div>
+                <p class="model-description">
+                    Distribución esférica de carga con simetría radial. El campo eléctrico depende de si el punto está dentro o fuera de la esfera.
+                </p>
+                
+                <div class="model-visualization">
+                    <div class="diagram">
+                        ● Esfera de radio R<br>
+                        Carga total: Q<br>
+                        Superficie gaussiana: Esférica
+                    </div>
+                </div>
+
+                <div class="model-formula">
+                    E(r) = 
+                    \begin{cases}
+                    \frac{kQ}{r^2} & r > R \\
+                    \frac{kQr}{R^3} & r < R
+                    \end{cases}
+                </div>
+
+                <div class="model-features">
+                    <ul class="feature-list">
+                        <li>Simetría esférica completa</li>
+                        <li>Campo radial en todas direcciones</li>
+                        <li>Dentro: Campo proporcional a r</li>
+                        <li>Fuera: Campo como carga puntual</li>
+                    </ul>
+                </div>
+
+                <a href="simulador-gauss-esfera.html" class="model-button">Ver Simulación 3D</a>
+            </div>
+
+            <!-- Modelo 2: Cilindro -->
+            <div class="model-card" id="cilindro">
+                <div class="model-header">
+                    <div class="model-icon"></div>
+                    <h2 class="model-title">Cilindro Infinito</h2>
+                </div>
+                <p class="model-description">
+                    Cilindro infinitamente largo con distribución de carga uniforme. Exhibe simetría cilíndrica perfecta.
+                </p>
+                
+                <div class="model-visualization">
+                    <div class="diagram">
+                        █ Cilindro infinito<br>
+                        Radio: R<br>
+                        Densidad lineal: λ<br>
+                        Superficie: Cilíndrica
+                    </div>
+                </div>
+
+                <div class="model-formula">
+                    E(r) = 
+                    \begin{cases}
+                    \frac{\lambda}{2\pi\epsilon_0 r} & r > R \\
+                    \frac{\lambda r}{2\pi\epsilon_0 R^2} & r < R
+                    \end{cases}
+                </div>
+
+                <div class="model-features">
+                    <ul class="feature-list">
+                        <li>Simetría cilíndrica</li>
+                        <li>Campo perpendicular al eje</li>
+                        <li>Proporcional a 1/r (exterior)</li>
+                        <li>Ideal para cables largos</li>
+                    </ul>
+                </div>
+
+                <a href="simulador-gauss-cilindro.html" class="model-button">Ver Simulación 3D</a>
+            </div>
+
+            <!-- Modelo 3: Plano Infinito -->
+            <div class="model-card" id="plano">
+                <div class="model-header">
+                    <div class="model-icon">⬜</div>
+                    <h2 class="model-title">Plano Infinito</h2>
+                </div>
+                <p class="model-description">
+                    Plano infinito con densidad de carga superficial uniforme. Produce un campo eléctrico constante.
+                </p>
+                
+                <div class="model-visualization">
+                    <div class="diagram">
+                        ▬▬▬▬▬▬▬▬ Plano infinito<br>
+                        Densidad: σ C/m²<br>
+                        Superficie: Caja rectangular
+                    </div>
+                </div>
+
+                <div class="model-formula">
+                    E = \frac{\sigma}{2\epsilon_0}
+                </div>
+
+                <div class="model-features">
+                    <ul class="feature-list">
+                        <li>Campo constante en magnitud</li>
+                        <li>Dirección perpendicular al plano</li>
+                        <li>Independiente de la distancia</li>
+                        <li>Útil para condensadores</li>
+                    </ul>
+                </div>
+
+                <a href="simulador-gauss-plano.html" class="model-button">Ver Simulación 3D</a>
+            </div>
+
+            
+
+            <!-- Modelo 5: Cascarón Esférico -->
+            <div class="model-card" id="cascaron">
+                <div class="model-header">
+                    <div class="model-icon">○</div>
+                    <h2 class="model-title">Cascarón Esférico</h2>
+                </div>
+                <p class="model-description">
+                    Esfera hueca con carga distribuida en su superficie. Muestra propiedades únicas de blindaje electrostático.
+                </p>
+                
+                <div class="model-visualization">
+                    <div class="diagram">
+                        ○ Cascarón esférico<br>
+                        Radio interno: a<br>
+                        Radio externo: b<br>
+                        Superficie: Esférica
+                    </div>
+                </div>
+
+                <div class="model-formula">
+                    E(r) = 
+                    \begin{cases}
+                    0 & r < a \\
+                    \frac{kQ}{r^2} & r > b \\
+                    \text{Variable} & a < r < b
+                    \end{cases}
+                </div>
+
+                <div class="model-features">
+                    <ul class="feature-list">
+                        <li>Campo cero en el interior</li>
+                        <li>Exterior como carga puntual</li>
+                        <li>Efecto de jaula de Faraday</li>
+                        <li>Importante en conductores</li>
+                    </ul>
+                </div>
+
+                <a href="simulador-gauss-cascaron.html" class="model-button">Ver Simulación 3D</a>
+            </div>
+
+            
+        </div>
+
+        <div class="theory-section">
+            <h2>Conceptos Fundamentales</h2>
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h3 class="concept-title">¿Qué es una superficie gaussiana?</h3>
+                    <p class="concept-description">
+                        Superficie cerrada imaginaria que elegimos para aplicar la Ley de Gauss. La elección correcta simplifica enormemente los cálculos al aprovechar las simetrías del sistema.
+                    </p>
+                </div>
+                <div class="concept-card">
+                    <h3 class="concept-title">Simetrías y selección de superficies</h3>
+                    <p class="concept-description">
+                        • <strong>Esférica:</strong> Usar superficie esférica<br>
+                        • <strong>Cilíndrica:</strong> Usar superficie cilíndrica coaxial<br>
+                        • <strong>Plana:</strong> Usar superficie tipo "caja"<br>
+                        La superficie debe ser perpendicular al campo donde sea posible.
+                    </p>
+                </div>
+                <div class="concept-card">
+                    <h3 class="concept-title">Flujo eléctrico</h3>
+                    <p class="concept-description">
+                        Medida del número neto de líneas de campo que atraviesan una superficie. Depende de la componente normal del campo eléctrico y del área de la superficie.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="applications">
+            <h2>Aplicaciones Prácticas</h2>
+            <div class="applications-grid">
+                <div class="app-card">
+                    <span class="app-icon">🔌</span>
+                    <h3 class="app-title">Transmisión Eléctrica</h3>
+                    <p class="app-description">Cálculo de campos alrededor de cables de alta tensión usando el modelo de línea de carga.</p>
+                </div>
+                <div class="app-card">
+                    <span class="app-icon">🛡️</span>
+                    <h3 class="app-title">Blindaje Electrostático</h3>
+                    <p class="app-description">Jaulas de Faraday que protegen equipos usando el principio del cascarón esférico.</p>
+                </div>
+                <div class="app-card">
+                    <span class="app-icon">💾</span>
+                    <h3 class="app-title">Condensadores</h3>
+                    <p class="app-description">Diseño de condensadores de placas paralelas usando el modelo de plano infinito.</p>
+                </div>
+                <div class="app-card">
+                    <span class="app-icon">🧪</span>
+                    <h3 class="app-title">Química Cuántica</h3>
+                    <p class="app-description">Estudio de momentos dipolares en moléculas usando el modelo de dipolo eléctrico.</p>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p class="footer-text">Simuladores de Física - Proyecto de la materia Fisica II</p>
+            <p class="footer-text">Universidad Politecnica de San Luis Potosi</p>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth scroll para navegación rápida
+        document.querySelectorAll('.quick-nav-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Efecto visual de resaltado
+                    targetElement.style.boxShadow = '0 0 30px rgba(255, 126, 95, 0.5)';
+                    setTimeout(() => {
+                        targetElement.style.boxShadow = '';
+                    }, 2000);
+                }
+            });
+        });
+
+        // Animación de entrada para las tarjetas
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.model-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 200);
+            });
+        });
+
+        // Efecto hover mejorado para botones de modelo
+        document.querySelectorAll('.model-button').forEach(button => {
+            button.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-3px) scale(1.05)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0) scale(1)';
+            });
+        });
+    </script>
+</body>
+</html>
