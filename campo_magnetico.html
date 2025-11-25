@@ -616,24 +616,54 @@
                 const dy = y - this.y;
                 const cos = Math.cos(-this.angle);
                 const sin = Math.sin(-this.angle);
-                const tx = dx * cos - dy * sin;
-                const ty = dx * sin + dy * cos;
+                const tx = dx * cos - dy * sin;  // Coordenada x en sistema del solenoide
+                const ty = dx * sin + dy * cos;  // Coordenada y en sistema del solenoide
                 
+                const n = this.turns / this.length;
+                const I = this.current;
+                
+                let Bx = 0;
+                let By = 0;
+                
+                // Determinar si estamos dentro del solenoide
                 const inside = Math.abs(tx) <= this.length/2 && Math.abs(ty) <= this.radius;
                 
-                let Bmag = 0;
                 if (inside) {
-                    const n = this.turns / this.length;
-                    Bmag = μ0 * n * this.current;
+                    // DENTRO del solenoide: campo uniforme y paralelo al eje
+                    const Bmag = μ0 * n * I * 500000; // Intensidad fuerte interna
+                    Bx = Bmag * Math.cos(this.angle);
+                    By = Bmag * Math.sin(this.angle);
                 } else {
-                    const r = Math.sqrt(tx*tx + ty*ty);
-                    if (r < 10) return { Bx: 0, By: 0 };
-                    Bmag = (this.current * this.turns * μ0 * this.radius * this.radius) / 
-                           (2 * Math.pow(r*r + this.length*this.length/4, 1.5));
+                    // FUERA del solenoide: tratar como un dipolo magnético
+                    
+                    // Calcular distancia desde el centro
+                    const r = Math.sqrt(tx * tx + ty * ty);
+                    if (r < 5) return { Bx: 0, By: 0 };
+                    
+                    // Momento dipolar magnético del solenoide
+                    const area = Math.PI * this.radius * this.radius;
+                    const magneticMoment = n * this.length * I * area;
+                    
+                    // Ángulo relativo al eje del solenoide
+                    const relAngle = Math.atan2(ty, tx);
+                    const cosTheta = Math.cos(relAngle - this.angle);
+                    const sinTheta = Math.sin(relAngle - this.angle);
+                    
+                    // Campo dipolar (fórmula simplificada)
+                    const Bmag = (μ0 * magneticMoment) / (4 * Math.PI * r * r * r) * 1000000;
+                    
+                    // Componentes del campo dipolar
+                    const Br = 2 * Bmag * cosTheta;
+                    const Btheta = Bmag * sinTheta;
+                    
+                    // Convertir a coordenadas cartesianas locales
+                    const Bx_local = Br * Math.cos(relAngle) + Btheta * Math.cos(relAngle + Math.PI/2);
+                    const By_local = Br * Math.sin(relAngle) + Btheta * Math.sin(relAngle + Math.PI/2);
+                    
+                    // Rotar al sistema global
+                    Bx = Bx_local * cos - By_local * sin;
+                    By = Bx_local * sin + By_local * cos;
                 }
-                
-                const Bx = Bmag * Math.cos(this.angle);
-                const By = Bmag * Math.sin(this.angle);
                 
                 return { Bx, By };
             }
@@ -918,4 +948,5 @@
         draw();
     </script>
 </body>
+
 </html>
