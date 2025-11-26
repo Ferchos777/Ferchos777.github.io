@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Física - Electromagnetismo</title>
+    <style>
+        /* === ESTILOS BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* === HEADER === */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #ecf0f1;
+        }
+
+        /* === NAVEGACIÓN === */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        /* === SECCIÓN DE TEMAS === */
+        .topics-section {
+            margin: 40px 0;
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .topic-card {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .topic-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .topic-title {
+            font-size: 1.5rem;
+            color: #ff7e5f;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .topic-description {
+            color: #bdc3c7;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .topic-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #feb47b;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #bdc3c7;
+        }
+
+        /* === SECCIÓN DE INTRODUCCIÓN === */
+        .intro-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === PROGRESO GENERAL === */
+        .progress-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff7e5f;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        /* === TIPOGRAFÍA === */
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff7e5f;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: #feb47b;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        /* === FOOTER === */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* === DISEÑO RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulador de Física - Electromagnetismo</h1>
+            <p class="subtitle">Explora los fascinantes fenómenos del electromagnetismo a través de problemas interactivos y simulaciones</p>
+            
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="campo_electrico.html" class="nav-btn">⚡ Simulador</a>
+                <a href="index_magnetismo_teoria.html" class="nav-btn">📚 Teoría</a>
+                <a href="index_magnetismo_problemas.html" class="nav-btn active">🎯 Problemas</a>
+            </div>
+        </header>
+
+        <!--<div class="intro-section">
+            <h2>Bienvenido al Simulador de Física</h2>
+            <p>Este simulador te permite explorar los conceptos fundamentales del electromagnetismo de manera interactiva. Aprende sobre campos eléctricos y magnéticos, circuitos, capacitancia y mucho más a través de problemas prácticos y simulaciones.</p>
+            <p>Selecciona uno de los temas a continuación para comenzar tu aprendizaje:</p>
+        </div>
+
+        <div class="progress-section">
+            <h2>Tu Progreso General</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" id="correctCount">0</span>
+                    <span class="stat-label">Problemas Correctos</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="attemptedCount">0</span>
+                    <span class="stat-label">Problemas Intentados</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="remainingCount">25</span>
+                    <span class="stat-label">Problemas Restantes</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="completedTopics">0</span>
+                    <span class="stat-label">Temas Completados</span>
+                </div>
+            </div>
+        </div>-->
+
+        <div class="topics-section">
+            <h2>Temas de Electromagnetismo</h2>
+            <div class="topics-grid">
+                <!-- Capacitancia y Dieléctricos -->
+                <div class="topic-card">
+                    <div class="topic-icon">⚡</div>
+                    <h3 class="topic-title">Capacitancia y Dieléctricos</h3>
+                    <p class="topic-description">Estudio del almacenamiento de energía eléctrica y el efecto de los materiales dieléctricos en los capacitores.</p>
+                    <div class="topic-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="cap-progress">0/5</div>
+                            <div class="stat-label">Problemas</div>
+                        </div>
+                        <a href="Capacitancia-y-Dielectos.html" class="nav-btn">Explorar</a>
+                    </div>
+                </div>
+
+                <!-- Circuitos -->
+                <div class="topic-card">
+                    <div class="topic-icon">🔌</div>
+                    <h3 class="topic-title">Circuitos</h3>
+                    <p class="topic-description">Análisis del comportamiento de circuitos eléctricos y sus componentes fundamentales.</p>
+                    <div class="topic-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="cir-progress">0/5</div>
+                            <div class="stat-label">Problemas</div>
+                        </div>
+                        <a href="Cicuitos.html" class="nav-btn">Explorar</a>
+                    </div>
+                </div>
+
+                <!-- Fuerza Magnética -->
+                <div class="topic-card">
+                    <div class="topic-icon">🧲</div>
+                    <h3 class="topic-title">Fuerza Magnética</h3>
+                    <p class="topic-description">Estudio de la fuerza ejercida por campos magnéticos sobre cargas en movimiento y conductores con corriente.</p>
+                    <div class="topic-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="mag-progress">0/5</div>
+                            <div class="stat-label">Problemas</div>
+                        </div>
+                        <a href="Fuerza-Magnetica.html" class="nav-btn">Explorar</a>
+                    </div>
+                </div>
+
+                <!-- Inducción Electromagnética -->
+                <div class="topic-card">
+                    <div class="topic-icon">🌀</div>
+                    <h3 class="topic-title">Inducción Electromagnética</h3>
+                    <p class="topic-description">La inducción electromagnética describe cómo los campos magnéticos variables generan corrientes eléctricas.</p>
+                    <div class="topic-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="ind-progress">0/5</div>
+                            <div class="stat-label">Problemas</div>
+                        </div>
+                        <a href="Induccion-Electromagnetica.html" class="nav-btn">Explorar</a>
+                    </div>
+                </div>
+
+                <!-- Ley de Ampère -->
+                <div class="topic-card">
+                    <div class="topic-icon">🔁</div>
+                    <h3 class="topic-title">Ley de Ampère</h3>
+                    <p class="topic-description">La Ley de Ampère relaciona la circulación del campo magnético con la corriente eléctrica que la produce.</p>
+                    <div class="topic-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="amp-progress">0/5</div>
+                            <div class="stat-label">Problemas</div>
+                        </div>
+                        <a href="Ley-Ampere.html" class="nav-btn">Explorar</a>
+                    </div>
+                </div>
+
+                <!-- Ley de Biot-Savart -->
+                <div class="topic-card">
+                    <div class="topic-icon">🔁</div>
+                    <h3 class="topic-title">Ley de Biot-Savart</h3>
+                    <p class="topic-description">La Ley de Biot-Savart relaciona la circulación del campo magnético con la corriente eléctrica que la produce.</p>
+                    <div class="topic-stats">
+                        <div class="stat">
+                            <div class="stat-value" id="amp-progress">0/5</div>
+                            <div class="stat-label">Problemas</div>
+                        </div>
+                        <a href="Ley-De-Biot-Savat.html" class="nav-btn">Explorar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Simulador de Física - Electromagnetismo © 2024</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                Constantes físicas: ε₀ = 8.85 × 10⁻¹² C²/N·m² | μ₀ = 4π × 10⁻⁷ T·m/A
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Estado del progreso general
+        let progress = {
+            correct: 0,
+            attempted: 0,
+            total: 25, // 5 temas × 5 problemas cada uno
+            topics: {
+                'cap': 0, // Capacitancia
+                'cir': 0, // Circuitos
+                'mag': 0, // Fuerza Magnética
+                'ind': 0, // Inducción Electromagnética
+                'amp': 0  // Ley de Ampère
+            }
+        };
+
+        // Función para actualizar el progreso
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const correctCount = document.getElementById('correctCount');
+            const attemptedCount = document.getElementById('attemptedCount');
+            const remainingCount = document.getElementById('remainingCount');
+            const completedTopics = document.getElementById('completedTopics');
+            
+            // Calcular progreso general
+            const percentage = (progress.correct / progress.total) * 100;
+            progressFill.style.width = percentage + '%';
+            progressFill.textContent = Math.round(percentage) + '%';
+            
+            correctCount.textContent = progress.correct;
+            attemptedCount.textContent = progress.attempted;
+            remainingCount.textContent = progress.total - progress.correct;
+            
+            // Contar temas completados (todos los problemas correctos)
+            let completed = 0;
+            for (const topic in progress.topics) {
+                if (progress.topics[topic] === 5) {
+                    completed++;
+                }
+                // Actualizar progreso por tema
+                document.getElementById(`${topic}-progress`).textContent = `${progress.topics[topic]}/5`;
+            }
+            completedTopics.textContent = completed;
+            
+            // Guardar progreso en localStorage
+            localStorage.setItem('physicsSimulatorProgress', JSON.stringify(progress));
+        }
+
+        // Función para cargar progreso desde localStorage
+        function loadProgress() {
+            const savedProgress = localStorage.getItem('physicsSimulatorProgress');
+            if (savedProgress) {
+                progress = JSON.parse(savedProgress);
+                updateProgress();
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            
+            // Agregar evento para actualizar progreso cuando se cargue una página de problemas
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'physicsSimulatorProgress') {
+                    loadProgress();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

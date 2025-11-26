@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teoría de Capacitancia y Dieléctricos - Simulador de Física</title>
+    <style>
+        /* === ESTILOS BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* === HEADER === */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #ecf0f1;
+        }
+
+        /* === NAVEGACIÓN === */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        /* === SECCIONES DE CONTENIDO === */
+        .content-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === ACORDEONES === */
+        .accordion {
+            margin: 20px 0;
+        }
+
+        .accordion-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            background: rgba(255, 126, 95, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 126, 95, 0.3);
+        }
+
+        .accordion-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            padding: 20px;
+            max-height: 1000px;
+        }
+
+        /* === FÓRMULAS === */
+        .formula-box {
+            background: rgba(255, 126, 95, 0.1);
+            border: 1px solid rgba(255, 126, 95, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'Cambria Math', serif;
+            font-size: 1.3rem;
+        }
+
+        .formula-explanation {
+            margin-top: 15px;
+            font-size: 1rem;
+            text-align: left;
+            color: #bdc3c7;
+        }
+
+        /* === EJEMPLOS === */
+        .example-box {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .example-title {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* === IMÁGENES Y DIAGRAMAS === */
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .diagram {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === TIPOGRAFÍA === */
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff7e5f;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: #feb47b;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* === FOOTER === */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* === DISEÑO RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Teoría de Capacitancia y Dieléctricos</h1>
+            <p class="subtitle">El estudio de los capacitores, dispositivos que almacenan energía en un campo eléctrico, y el efecto de los materiales aislantes en su funcionamiento</p>
+            
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="campo_magnetico.html" class="nav-btn">⚡ Simulador</a>
+                <a href="index_magnetismo_teoria.html" class="nav-btn active">📚 Teoría</a>
+                <a href="index_magnetismo_problemas.html" class="nav-btn">🎯 Problemas</a>
+            </div>
+        </header>
+
+        <div class="content-section">
+            <h2>¿Qué es un Capacitor?</h2>
+            <p>Un capacitor (o condensador) es un dispositivo de dos terminales utilizado para almacenar energía en un campo eléctrico. Consiste en dos conductores (placas) separados por un aislante (llamado dieléctrico). Cuando se aplica una diferencia de potencial (voltaje) entre las placas, se acumula una carga en ellas: una placa adquiere carga positiva (+Q) y la otra, carga negativa (-Q).</p>
+            
+            <p>La capacidad de un capacitor para almacenar carga por unidad de voltaje se define como su <strong>capacitancia</strong>. Los capacitores son componentes fundamentales en circuitos electrónicos, con funciones que incluyen el filtrado de señales, el almacenamiento de energía, el acoplamiento de señales y la temporización.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Capacitancia</h2>
+            
+            <p>La capacitancia (C) de un capacitor se define como la relación entre la magnitud de la carga (Q) almacenada en una de las placas y la diferencia de potencial (V) entre ellas:</p>
+            
+            <div class="formula-box">
+                C = Q / V
+            </div>
+            
+            <div class="formula-explanation">
+                <p>Donde:</p>
+                <ul>
+                    <li><strong>C</strong> es la capacitancia, medida en Faradios (F).</li>
+                    <li><strong>Q</strong> es la carga almacenada, medida en Culombios (C).</li>
+                    <li><strong>V</strong> es la diferencia de potencial (voltaje), medida en Voltios (V).</li>
+                </ul>
+                <p>Un Faradio es una unidad muy grande, por lo que la capacitancia suele expresarse en submúltiplos como microfaradios (μF), nanofaradios (nF) o picofaradios (pF).</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Capacitor de Placas Paralelas</h2>
+            
+            <p>El tipo más simple de capacitor es el de placas paralelas, que consiste en dos placas conductoras planas y paralelas separadas por una distancia <em>d</em>. La capacitancia de este tipo de capacitor depende de su geometría y del material entre las placas.</p>
+            
+            <p>Para un capacitor de placas paralelas con vacío entre ellas, la capacitancia está dada por:</p>
+            
+            <div class="formula-box">
+                C = ε₀ · (A / d)
+            </div>
+            
+            <div class="formula-explanation">
+                <p>Donde:</p>
+                <ul>
+                    <li><strong>ε₀</strong> es la permitividad eléctrica del vacío (ε₀ ≈ 8.85 × 10⁻¹² F/m).</li>
+                    <li><strong>A</strong> es el área de una de las placas.</li>
+                    <li><strong>d</strong> es la separación entre las placas.</li>
+                </ul>
+            </div>
+            
+        </div>
+
+        <div class="content-section">
+            <h2>Dieléctricos</h2>
+            
+            <p>Un <strong>dieléctrico</strong> es un material aislante (no conductor) que se coloca entre las placas de un capacitor. Los dieléctricos comunes incluyen el vidrio, el papel, el plástico y la cerámica.</p>
+            
+            <p>Cuando se inserta un dieléctrico entre las placas de un capacitor cargado (y desconectado de la fuente de voltaje), ocurren dos cosas:</p>
+            <ol>
+                <li>El campo eléctrico externo polariza las moléculas del dieléctrico, creando un campo eléctrico interno que se opone al campo externo.</li>
+                <li>Este campo interno reduce el campo eléctrico neto entre las placas.</li>
+            </ol>
+            
+            <p>Como resultado, para una misma cantidad de carga Q, el voltaje V entre las placas disminuye. Dado que C = Q/V, una disminución de V conduce a un aumento de la capacitancia.</p>
+            
+            <p>El aumento de la capacitancia se cuantifica mediante la <strong>constante dieléctrica</strong> (κ o K) del material, que es un factor adimensional:</p>
+            
+            <div class="formula-box">
+                C = κ · C₀ = κ · ε₀ · (A / d)
+            </div>
+            
+            <p>Donde C₀ es la capacitancia original (con vacío) y C es la nueva capacitancia con el dieléctrico. La constante dieléctrica del vacío es κ = 1, y para todos los demás materiales, κ > 1.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Energía Almacenada en un Capacitor</h2>
+            
+            <p>Un capacitor cargado almacena energía potencial eléctrica en su campo eléctrico. La energía (U) almacenada en un capacitor con capacitancia C, cargado a un voltaje V y con una carga Q, está dada por:</p>
+            
+            <div class="formula-box">
+                U = ½ QV = ½ CV² = Q² / 2C
+            </div>
+            
+            <p>Esta energía es la que se libera cuando el capacitor se descarga a través de un circuito. La capacidad de almacenar y liberar energía rápidamente es una de las propiedades más útiles de los capacitores.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Aplicaciones de los Capacitores</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Almacenamiento de Energía y Flash Fotográfico</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Los capacitores pueden liberar su energía almacenada en un tiempo muy corto. Esta propiedad se utiliza en los flashes de las cámaras fotográficas, donde un capacitor se carga lentamente y luego se descarga rápidamente a través de una lámpara de flash, produciendo un destello de luz intenso.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Filtrado en Fuentes de Alimentación</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>En las fuentes de alimentación de corriente continua (DC), los capacitores se utilizan para "suavizar" el voltaje rectificado. Después de convertir la corriente alterna (AC) en una corriente pulsante, los capacitores se cargan en los picos de voltaje y se descargan en los valles, reduciendo la ondulación (ripple) y produciendo un voltaje DC más estable.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Acoplamiento y Desacoplamiento de Señales</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>En circuitos de audio y de radiofrecuencia, los capacitores se utilizan para bloquear las componentes de corriente continua (DC) mientras permiten el paso de las señales de corriente alterna (AC). Esto se conoce como acoplamiento capacitivo y es crucial para conectar diferentes etapas de un amplificador sin afectar sus puntos de operación de DC.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Temporizadores y Circuitos Osciladores</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>El tiempo que tarda un capacitor en cargarse o descargarse a través de una resistencia es predecible (constante de tiempo τ = RC). Esta propiedad se aprovecha en circuitos temporizadores (como el popular circuito integrado 555) y en osciladores para generar señales periódicas.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Ejemplo de Cálculo</h2>
+            
+            <div class="example-box">
+                <div class="example-title">Ejemplo: Capacitor de placas paralelas con dieléctrico</div>
+                <p>Un capacitor de placas paralelas tiene placas cuadradas de 5 cm de lado y están separadas por 2 mm. Entre las placas se inserta un dieléctrico de cerámica con una constante dieléctrica κ = 5. Calcula:</p>
+                <ol>
+                    <li>La capacitancia del capacitor.</li>
+                    <li>La carga que almacenará si se conecta a una batería de 12 V.</li>
+                    <li>La energía almacenada.</li>
+                </ol>
+                
+                <p><strong>Datos:</strong></p>
+                <ul>
+                    <li>Lado del cuadrado, l = 5 cm = 0.05 m</li>
+                    <li>Área, A = l² = (0.05 m)² = 0.0025 m²</li>
+                    <li>Separación, d = 2 mm = 0.002 m</li>
+                    <li>Constante dieléctrica, κ = 5</li>
+                    <li>Voltaje, V = 12 V</li>
+                    <li>ε₀ ≈ 8.85 × 10⁻¹² F/m</li>
+                </ul>
+                
+                <p><strong>1. Cálculo de la Capacitancia (C):</strong></p>
+                <div class="formula-box">
+                    C = κ · ε₀ · (A / d) = 5 · (8.85 × 10⁻¹² F/m) · (0.0025 m² / 0.002 m) = 5.53 × 10⁻¹¹ F = 55.3 pF
+                </div>
+                
+                <p><strong>2. Cálculo de la Carga Almacenada (Q):</strong></p>
+                <div class="formula-box">
+                    Q = C · V = (5.53 × 10⁻¹¹ F) · (12 V) = 6.64 × 10⁻¹⁰ C
+                </div>
+                
+                <p><strong>3. Cálculo de la Energía Almacenada (U):</strong></p>
+                <div class="formula-box">
+                    U = ½ C · V² = 0.5 · (5.53 × 10⁻¹¹ F) · (12 V)² = 3.98 × 10⁻⁹ J
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Capacitancia y Dieléctricos - Simulador de Física © 2024</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                Constantes físicas: ε₀ = 8.85 × 10⁻¹² C²/N·m² | μ₀ = 4π × 10⁻⁷ T·m/A
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Función para manejar los acordeones
+        function toggleAccordion(element) {
+            const item = element.parentElement;
+            const allItems = document.querySelectorAll('.accordion-item');
+            
+            // Cierra todos los demás acordeones
+            allItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Abre o cierra el acordeón actual
+            item.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inducción Electromagnética - Simulador de Física</title>
+    <style>
+        /* === ESTILOS BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* === HEADER === */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #ecf0f1;
+        }
+
+        /* === NAVEGACIÓN === */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        /* === TEORÍA === */
+        .theory-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === PROBLEMAS === */
+        .problems-container {
+            margin: 30px 0;
+        }
+
+        .problem-card {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .problem-title {
+            font-size: 1.5rem;
+            color: #ff7e5f;
+        }
+
+        .problem-difficulty {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .difficulty-easy {
+            background: rgba(46, 204, 113, 0.3);
+            color: #2ecc71;
+        }
+
+        .difficulty-medium {
+            background: rgba(243, 156, 18, 0.3);
+            color: #f39c12;
+        }
+
+        .difficulty-hard {
+            background: rgba(231, 76, 60, 0.3);
+            color: #e74c3c;
+        }
+
+        .problem-content {
+            margin-bottom: 20px;
+        }
+
+        .problem-formula {
+            font-family: 'Cambria Math', serif;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 126, 95, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 126, 95, 0.3);
+        }
+
+        /* === SECCIÓN DE RESPUESTA === */
+        .answer-section {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .answer-input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .answer-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            transition: border-color 0.3s ease;
+        }
+
+        .answer-input:focus {
+            border-color: #ff7e5f;
+            outline: none;
+        }
+
+        .unit-select {
+            padding: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            cursor: pointer;
+        }
+
+        .check-answer-btn {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .check-answer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === RETROALIMENTACIÓN === */
+        .feedback {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feedback.correct {
+            background: rgba(46, 204, 113, 0.2);
+            border: 1px solid rgba(46, 204, 113, 0.5);
+            color: #2ecc71;
+        }
+
+        .feedback.incorrect {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.5);
+            color: #e74c3c;
+        }
+
+        .feedback.partial {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid rgba(243, 156, 18, 0.5);
+            color: #f39c12;
+        }
+
+        /* === HINTS === */
+        .hint-section {
+            margin-top: 15px;
+        }
+
+        .hint-btn {
+            background: linear-gradient(135deg, #9b59b6, #8e44ad);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .hint-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .hint-content {
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* === SOLUCIÓN COMPLETA === */
+        .solution-section {
+            margin-top: 20px;
+        }
+
+        .solution-toggle {
+            background: linear-gradient(135deg, #e67e22, #d35400);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .solution-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .problem-solution {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 15px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* === TIPOGRAFÍA === */
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff7e5f;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: #feb47b;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        /* === PROGRESO === */
+        .progress-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ff7e5f;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #bdc3c7;
+        }
+
+        /* === FOOTER === */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* === DISEÑO RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .answer-input-group {
+                flex-direction: column;
+            }
+
+            .answer-input, .unit-select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Inducción Electromagnética</h1>
+            <p class="subtitle">La inducción electromagnética describe cómo los campos magnéticos variables generan corrientes eléctricas</p>
+            
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="campo_electrico.html" class="nav-btn">⚡ Simulador</a>
+                <a href="index_magnetismo_teoria.html" class="nav-btn">📚 Teoría</a>
+                <a href="index_magnetismo_problemas.html" class="nav-btn active">🎯 Problemas</a>
+            </div>
+        </header>
+
+        <div class="theory-section">
+            <h2>Conceptos Fundamentales</h2>
+            <p>La inducción electromagnética, descubierta por Michael Faraday en 1831, es el fenómeno por el cual un campo magnético variable induce una fuerza electromotriz (fem) en un conductor. Este principio es la base de generadores eléctricos, transformadores y muchas tecnologías modernas.</p>
+            
+            <h3>Ley de Faraday</h3>
+            <div class="problem-formula">
+                ε = -N · (dΦ<sub>B</sub>/dt)
+            </div>
+            
+            <h3>Ley de Lenz</h3>
+            <div class="problem-formula">
+                La corriente inducida se opone al cambio que la produce
+            </div>
+            
+            <h3>Aplicaciones</h3>
+            <p>Generadores eléctricos, transformadores, inducción magnética en cocina, tarjetas de crédito, cargadores inalámbricos y muchos otros dispositivos electromagnéticos.</p>
+        </div>
+
+        <div class="progress-section">
+            <h2>Tu Progreso</h2>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" id="correctCount">0</span>
+                    <span class="stat-label">Correctos</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="attemptedCount">0</span>
+                    <span class="stat-label">Intentados</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="remainingCount">5</span>
+                    <span class="stat-label">Restantes</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="problems-container">
+            <h2>Problemas Propuestos</h2>
+            
+            <!-- Problema 1 -->
+            <div class="problem-card" data-problem="1">
+                <div class="problem-header">
+                    <h3 class="problem-title">Problema 1</h3>
+                    <span class="problem-difficulty difficulty-easy">Fácil</span>
+                </div>
+                <div class="problem-content">
+                    <p>Una espira circular de radio 10 cm está en un campo magnético uniforme de 0.5 T. Si el campo magnético disminuye uniformemente a cero en 0.2 segundos, calcula la fem inducida en la espira.</p>
+                    <div class="problem-formula">
+                        ε = -N · (ΔΦ/Δt) = -N · (Δ(B·A)/Δt)
+                    </div>
+                </div>
+                
+                <div class="answer-section">
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" id="answer1" placeholder="Tu respuesta" step="any">
+                        <select class="unit-select" id="unit1">
+                            <option value="">Seleccionar unidad</option>
+                            <option value="V">Voltios (V)</option>
+                            <option value="mV">miliVoltios (mV)</option>
+                            <option value="μV">microVoltios (μV)</option>
+                        </select>
+                        <button class="check-answer-btn" onclick="checkAnswer(1)">
+                            <span>✓</span> Verificar
+                        </button>
+                    </div>
+                    
+                    <div class="feedback" id="feedback1"></div>
+                    
+                    <div class="hint-section">
+                        <button class="hint-btn" onclick="toggleHint(1)">
+                            <span>💡</span> Pista
+                        </button>
+                        <div class="hint-content" id="hint1">
+                            Calcula el área de la espira: A = πr². El flujo cambia de B·A a 0. Usa N = 1 para una sola espira.
+                        </div>
+                    </div>
+                    
+                    <div class="solution-section">
+                        <button class="solution-toggle" onclick="toggleSolution(1)">
+                            <span>📖</span> Ver Solución Completa
+                        </button>
+                        <div class="problem-solution" id="solution1">
+                            <h4>Solución:</h4>
+                            <p>Datos: r = 10 cm = 0.1 m, B<sub>i</sub> = 0.5 T, B<sub>f</sub> = 0 T, Δt = 0.2 s, N = 1</p>
+                            <p>Área: A = π(0.1)² = 0.0314 m²</p>
+                            <p>Cambio de flujo: ΔΦ = (0 - 0.5) × 0.0314 = -0.0157 Wb</p>
+                            <div class="problem-formula">
+                                ε = -1 × (-0.0157 Wb / 0.2 s) = 0.0785 V
+                            </div>
+                            <p>La fem inducida es de 0.0785 V o 78.5 mV.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Problema 2 -->
+            <div class="problem-card" data-problem="2">
+                <div class="problem-header">
+                    <h3 class="problem-title">Problema 2</h3>
+                    <span class="problem-difficulty difficulty-easy">Fácil</span>
+                </div>
+                <div class="problem-content">
+                    <p>Una bobina con 100 vueltas tiene un área de 50 cm². Si la bobina se gira desde una posición perpendicular a un campo magnético de 0.2 T hasta una posición paralela en 0.1 segundos, calcula la fem promedio inducida.</p>
+                    <div class="problem-formula">
+                        ε<sub>prom</sub> = -N · (ΔΦ/Δt) = -N · (B·A·cosθ<sub>f</sub> - B·A·cosθ<sub>i</sub>)/Δt
+                    </div>
+                </div>
+                
+                <div class="answer-section">
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" id="answer2" placeholder="Tu respuesta" step="any">
+                        <select class="unit-select" id="unit2">
+                            <option value="">Seleccionar unidad</option>
+                            <option value="V">Voltios (V)</option>
+                            <option value="mV">miliVoltios (mV)</option>
+                            <option value="μV">microVoltios (μV)</option>
+                        </select>
+                        <button class="check-answer-btn" onclick="checkAnswer(2)">
+                            <span>✓</span> Verificar
+                        </button>
+                    </div>
+                    
+                    <div class="feedback" id="feedback2"></div>
+                    
+                    <div class="hint-section">
+                        <button class="hint-btn" onclick="toggleHint(2)">
+                            <span>💡</span> Pista
+                        </button>
+                        <div class="hint-content" id="hint2">
+                            θ<sub>i</sub> = 0° (perpendicular), θ<sub>f</sub> = 90° (paralelo). Convierte el área a m².
+                        </div>
+                    </div>
+                    
+                    <div class="solution-section">
+                        <button class="solution-toggle" onclick="toggleSolution(2)">
+                            <span>📖</span> Ver Solución Completa
+                        </button>
+                        <div class="problem-solution" id="solution2">
+                            <h4>Solución:</h4>
+                            <p>Datos: N = 100, A = 50 cm² = 0.005 m², B = 0.2 T, Δt = 0.1 s</p>
+                            <p>Flujo inicial: Φ<sub>i</sub> = 0.2 × 0.005 × cos(0°) = 0.001 Wb</p>
+                            <p>Flujo final: Φ<sub>f</sub> = 0.2 × 0.005 × cos(90°) = 0 Wb</p>
+                            <div class="problem-formula">
+                                ε = -100 × (0 - 0.001) / 0.1 = 1.0 V
+                            </div>
+                            <p>La fem promedio inducida es de 1.0 V.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Problema 3 -->
+            <div class="problem-card" data-problem="3">
+                <div class="problem-header">
+                    <h3 class="problem-title">Problema 3</h3>
+                    <span class="problem-difficulty difficulty-medium">Medio</span>
+                </div>
+                <div class="problem-content">
+                    <p>Una barra conductora de 50 cm se mueve con velocidad constante de 4 m/s perpendicularmente a un campo magnético uniforme de 0.3 T. Calcula la fem inducida entre los extremos de la barra.</p>
+                    <div class="problem-formula">
+                        ε = B · L · v · sin(θ)
+                    </div>
+                </div>
+                
+                <div class="answer-section">
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" id="answer3" placeholder="Tu respuesta" step="any">
+                        <select class="unit-select" id="unit3">
+                            <option value="">Seleccionar unidad</option>
+                            <option value="V">Voltios (V)</option>
+                            <option value="mV">miliVoltios (mV)</option>
+                            <option value="μV">microVoltios (μV)</option>
+                        </select>
+                        <button class="check-answer-btn" onclick="checkAnswer(3)">
+                            <span>✓</span> Verificar
+                        </button>
+                    </div>
+                    
+                    <div class="feedback" id="feedback3"></div>
+                    
+                    <div class="hint-section">
+                        <button class="hint-btn" onclick="toggleHint(3)">
+                            <span>💡</span> Pista
+                        </button>
+                        <div class="hint-content" id="hint3">
+                            Como el movimiento es perpendicular al campo, θ = 90° y sin(90°) = 1. Convierte la longitud a metros.
+                        </div>
+                    </div>
+                    
+                    <div class="solution-section">
+                        <button class="solution-toggle" onclick="toggleSolution(3)">
+                            <span>📖</span> Ver Solución Completa
+                        </button>
+                        <div class="problem-solution" id="solution3">
+                            <h4>Solución:</h4>
+                            <p>Datos: B = 0.3 T, L = 50 cm = 0.5 m, v = 4 m/s, θ = 90°</p>
+                            <div class="problem-formula">
+                                ε = 0.3 T × 0.5 m × 4 m/s × sin(90°) = 0.6 V
+                            </div>
+                            <p>La fem inducida entre los extremos de la barra es de 0.6 V o 600 mV.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Problema 4 -->
+            <div class="problem-card" data-problem="4">
+                <div class="problem-header">
+                    <h3 class="problem-title">Problema 4</h3>
+                    <span class="problem-difficulty difficulty-medium">Medio</span>
+                </div>
+                <div class="problem-content">
+                    <p>Un solenoide largo con 1000 vueltas por metro tiene un radio de 2 cm. Una espira circular de radio 3 cm con 50 vueltas se coloca coaxialmente alrededor del solenoide. Si la corriente en el solenoide cambia de 0 a 5 A en 0.01 segundos, calcula la fem inducida en la espira.</p>
+                    <div class="problem-formula">
+                        ε = -N<sub>2</sub> · (dΦ<sub>2</sub>/dt) = -N<sub>2</sub> · A<sub>2</sub> · (dB/dt)
+                    </div>
+                </div>
+                
+                <div class="answer-section">
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" id="answer4" placeholder="Tu respuesta" step="any">
+                        <select class="unit-select" id="unit4">
+                            <option value="">Seleccionar unidad</option>
+                            <option value="V">Voltios (V)</option>
+                            <option value="mV">miliVoltios (mV)</option>
+                            <option value="μV">microVoltios (μV)</option>
+                        </select>
+                        <button class="check-answer-btn" onclick="checkAnswer(4)">
+                            <span>✓</span> Verificar
+                        </button>
+                    </div>
+                    
+                    <div class="feedback" id="feedback4"></div>
+                    
+                    <div class="hint-section">
+                        <button class="hint-btn" onclick="toggleHint(4)">
+                            <span>💡</span> Pista
+                        </button>
+                        <div class="hint-content" id="hint4">
+                            Primero calcula el campo magnético del solenoide: B = μ₀·n·I. Luego calcula el cambio de B y la fem inducida.
+                        </div>
+                    </div>
+                    
+                    <div class="solution-section">
+                        <button class="solution-toggle" onclick="toggleSolution(4)">
+                            <span>📖</span> Ver Solución Completa
+                        </button>
+                        <div class="problem-solution" id="solution4">
+                            <h4>Solución:</h4>
+                            <p>Datos: n<sub>1</sub> = 1000 vueltas/m, N<sub>2</sub> = 50, r<sub>2</sub> = 3 cm = 0.03 m, ΔI = 5 A, Δt = 0.01 s</p>
+                            <p>Campo magnético final: B<sub>f</sub> = 4π × 10⁻⁷ × 1000 × 5 = 6.28 × 10⁻³ T</p>
+                            <p>Área de la espira: A<sub>2</sub> = π(0.03)² = 2.83 × 10⁻³ m²</p>
+                            <div class="problem-formula">
+                                ε = -50 × 2.83 × 10⁻³ × (6.28 × 10⁻³ / 0.01) = -0.089 V
+                            </div>
+                            <p>La fem inducida es de 0.089 V o 89 mV (el signo negativo indica la dirección según Lenz).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Problema 5 -->
+            <div class="problem-card" data-problem="5">
+                <div class="problem-header">
+                    <h3 class="problem-title">Problema 5</h3>
+                    <span class="problem-difficulty difficulty-hard">Difícil</span>
+                </div>
+                <div class="problem-content">
+                    <p>Un rectángulo de alambre con lados de 10 cm y 20 cm se mueve con velocidad constante de 2 m/s entrando en una región donde existe un campo magnético uniforme de 0.5 T perpendicular al plano del rectángulo. La región del campo tiene 30 cm de ancho. Calcula la fem inducida mientras el rectángulo está parcialmente dentro del campo.</p>
+                    <div class="problem-formula">
+                        ε = -dΦ/dt = -B · (dA/dt) = -B · L · v
+                    </div>
+                </div>
+                
+                <div class="answer-section">
+                    <div class="answer-input-group">
+                        <input type="number" class="answer-input" id="answer5" placeholder="Tu respuesta" step="any">
+                        <select class="unit-select" id="unit5">
+                            <option value="">Seleccionar unidad</option>
+                            <option value="V">Voltios (V)</option>
+                            <option value="mV">miliVoltios (mV)</option>
+                            <option value="μV">microVoltios (μV)</option>
+                        </select>
+                        <button class="check-answer-btn" onclick="checkAnswer(5)">
+                            <span>✓</span> Verificar
+                        </button>
+                    </div>
+                    
+                    <div class="feedback" id="feedback5"></div>
+                    
+                    <div class="hint-section">
+                        <button class="hint-btn" onclick="toggleHint(5)">
+                            <span>💡</span> Pista
+                        </button>
+                        <div class="hint-content" id="hint5">
+                            Mientras el rectángulo entra, el área dentro del campo cambia. La tasa de cambio del área es L × v donde L es el lado perpendicular al movimiento.
+                        </div>
+                    </div>
+                    
+                    <div class="solution-section">
+                        <button class="solution-toggle" onclick="toggleSolution(5)">
+                            <span>📖</span> Ver Solución Completa
+                        </button>
+                        <div class="problem-solution" id="solution5">
+                            <h4>Solución:</h4>
+                            <p>Datos: B = 0.5 T, L = 20 cm = 0.2 m (lado perpendicular al movimiento), v = 2 m/s</p>
+                            <p>La tasa de cambio del área: dA/dt = L × v = 0.2 m × 2 m/s = 0.4 m²/s</p>
+                            <div class="problem-formula">
+                                ε = -B × (dA/dt) = -0.5 T × 0.4 m²/s = -0.2 V
+                            </div>
+                            <p>La fem inducida es de 0.2 V o 200 mV. El signo negativo indica que la corriente inducida se opone al aumento del flujo (Ley de Lenz).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Inducción Electromagnética - Simulador de Física © 2024</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                Constantes físicas: ε₀ = 8.85 × 10⁻¹² C²/N·m² | μ₀ = 4π × 10⁻⁷ T·m/A
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Base de datos de respuestas correctas
+        const correctAnswers = {
+            1: { value: 0.0785, unit: "V", tolerance: 0.05 },
+            2: { value: 1.0, unit: "V", tolerance: 0.05 },
+            3: { value: 0.6, unit: "V", tolerance: 0.05 },
+            4: { value: 0.089, unit: "V", tolerance: 0.05 },
+            5: { value: 0.2, unit: "V", tolerance: 0.05 }
+        };
+
+        // Estado del progreso
+        let progress = {
+            correct: 0,
+            attempted: 0,
+            solved: new Set()
+        };
+
+        // Función para verificar respuestas
+        function checkAnswer(problemNumber) {
+            const userAnswer = parseFloat(document.getElementById(`answer${problemNumber}`).value);
+            const userUnit = document.getElementById(`unit${problemNumber}`).value;
+            const feedback = document.getElementById(`feedback${problemNumber}`);
+            const correct = correctAnswers[problemNumber];
+            
+            if (isNaN(userAnswer) || userUnit === "") {
+                feedback.className = "feedback incorrect";
+                feedback.innerHTML = "⚠️ Por favor, ingresa un valor numérico y selecciona una unidad.";
+                feedback.style.display = "block";
+                return;
+            }
+            
+            // Convertir la respuesta del usuario a la unidad correcta
+            let convertedAnswer = userAnswer;
+            if (userUnit !== correct.unit) {
+                convertedAnswer = convertUnits(userAnswer, userUnit, correct.unit);
+            }
+            
+            // Verificar si la respuesta es correcta dentro de la tolerancia
+            const isCorrect = Math.abs(convertedAnswer - correct.value) <= correct.value * correct.tolerance;
+            
+            // Actualizar progreso
+            if (!progress.solved.has(problemNumber)) {
+                progress.attempted++;
+                if (isCorrect) {
+                    progress.correct++;
+                    progress.solved.add(problemNumber);
+                }
+                updateProgress();
+            }
+            
+            // Mostrar retroalimentación
+            feedback.style.display = "block";
+            if (isCorrect) {
+                feedback.className = "feedback correct";
+                feedback.innerHTML = `✅ ¡Correcto! La respuesta es ${correct.value.toExponential(2)} ${correct.unit}.`;
+            } else {
+                feedback.className = "feedback incorrect";
+                const difference = Math.abs(convertedAnswer - correct.value);
+                const percentError = (difference / correct.value * 100).toFixed(1);
+                feedback.innerHTML = `❌ Incorrecto. Tu respuesta: ${userAnswer} ${userUnit}.<br>
+                                    Error: ${percentError}% ${convertedAnswer > correct.value ? 'por encima' : 'por debajo'} del valor correcto.<br>
+                                    Sugerencia: Revisa tus cálculos y las unidades utilizadas.`;
+            }
+        }
+
+        // Función para convertir entre unidades
+        function convertUnits(value, fromUnit, toUnit) {
+            const conversions = {
+                'V': { 'mV': 1000, 'μV': 1e6 },
+                'mV': { 'V': 0.001, 'μV': 1000 },
+                'μV': { 'V': 1e-6, 'mV': 0.001 }
+            };
+            
+            if (fromUnit === toUnit) return value;
+            return value * (conversions[fromUnit][toUnit] || 1);
+        }
+
+        // Función para mostrar/ocultar pistas
+        function toggleHint(problemNumber) {
+            const hint = document.getElementById(`hint${problemNumber}`);
+            if (hint.style.display === 'block') {
+                hint.style.display = 'none';
+            } else {
+                hint.style.display = 'block';
+            }
+        }
+
+        // Función para mostrar/ocultar soluciones
+        function toggleSolution(problemNumber) {
+            const solution = document.getElementById(`solution${problemNumber}`);
+            if (solution.style.display === 'block') {
+                solution.style.display = 'none';
+            } else {
+                solution.style.display = 'block';
+            }
+        }
+
+        // Función para actualizar el progreso
+        function updateProgress() {
+            const progressFill = document.getElementById('progressFill');
+            const correctCount = document.getElementById('correctCount');
+            const attemptedCount = document.getElementById('attemptedCount');
+            const remainingCount = document.getElementById('remainingCount');
+            
+            const percentage = (progress.correct / 5) * 100;
+            progressFill.style.width = percentage + '%';
+            progressFill.textContent = Math.round(percentage) + '%';
+            
+            correctCount.textContent = progress.correct;
+            attemptedCount.textContent = progress.attempted;
+            remainingCount.textContent = 5 - progress.correct;
+            
+            // Mensaje de felicitación si completa todos los problemas
+            if (progress.correct === 5) {
+                setTimeout(() => {
+                    alert('🎉 ¡Felicidades! Has completado todos los problemas correctamente.');
+                }, 500);
+            }
+        }
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            // Agregar evento Enter para verificar respuesta
+            document.querySelectorAll('.answer-input').forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const problemNumber = this.id.replace('answer', '');
+                        checkAnswer(parseInt(problemNumber));
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

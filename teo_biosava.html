@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teoría de la Ley de Biot-Savart - Simulador de Física</title>
+    <style>
+        /* === ESTILOS BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* === HEADER === */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #ecf0f1;
+        }
+
+        /* === NAVEGACIÓN === */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        /* === SECCIONES DE CONTENIDO === */
+        .content-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === ACORDEONES === */
+        .accordion {
+            margin: 20px 0;
+        }
+
+        .accordion-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            background: rgba(255, 126, 95, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 126, 95, 0.3);
+        }
+
+        .accordion-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            padding: 20px;
+            max-height: 1000px;
+        }
+
+        /* === FÓRMULAS === */
+        .formula-box {
+            background: rgba(255, 126, 95, 0.1);
+            border: 1px solid rgba(255, 126, 95, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'Cambria Math', serif;
+            font-size: 1.3rem;
+        }
+
+        .formula-explanation {
+            margin-top: 15px;
+            font-size: 1rem;
+            text-align: left;
+            color: #bdc3c7;
+        }
+
+        /* === EJEMPLOS === */
+        .example-box {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .example-title {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* === IMÁGENES Y DIAGRAMAS === */
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .diagram {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === TABLAS === */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(255, 126, 95, 0.2);
+            font-weight: bold;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* === TIPOGRAFÍA === */
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff7e5f;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: #feb47b;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* === FOOTER === */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* === DISEÑO RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Teoría de la Ley de Biot-Savart</h1>
+            <p class="subtitle">Fundamentos matemáticos y aplicaciones de la ley que describe el campo magnético generado por corrientes eléctricas</p>
+            
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="campo_magnetico.html" class="nav-btn">⚡ Simulador</a>
+                <a href="index_magnetismo_teoria.html" class="nav-btn active">📚 Teoría</a>
+                <a href="index_magnetismo_problemas.html" class="nav-btn">🎯 Problemas</a>
+            </div>
+        </header>
+
+        <div class="content-section">
+            <h2>Introducción</h2>
+            <p>La Ley de Biot-Savart es una ecuación fundamental en el electromagnetismo que describe el campo magnético generado por una corriente eléctrica estacionaria. Fue descubierta por Jean-Baptiste Biot y Félix Savart en 1820, poco después de que Hans Christian Ørsted descubriera la relación entre la electricidad y el magnetismo.</p>
+            
+            <p>Esta ley permite calcular el campo magnético producido por cualquier distribución de corriente, ya sea un alambre recto, una espira circular, un solenoide o configuraciones más complejas. Es una de las cuatro ecuaciones fundamentales del electromagnetismo clásico, junto con la Ley de Gauss para el magnetismo, la Ley de Faraday y la Ley de Ampère-Maxwell.</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Formulación Matemática</h2>
+            
+            <div class="formula-box">
+                d<strong>B</strong> = (μ₀/4π) · (I · d<strong>l</strong> × <strong>r̂</strong>) / r²
+            </div>
+            
+            <div class="formula-explanation">
+                <p>Donde:</p>
+                <ul>
+                    <li><strong>d<strong>B</strong></strong> es el elemento diferencial del campo magnético en el punto de observación</li>
+                    <li><strong>μ₀</strong> es la permeabilidad magnética del vacío (μ₀ = 4π × 10⁻⁷ T·m/A)</li>
+                    <li><strong>I</strong> es la corriente eléctrica que fluye a través del conductor</li>
+                    <li><strong>d<strong>l</strong></strong> es un elemento diferencial de longitud del conductor</li>
+                    <li><strong><strong>r̂</strong></strong> es el vector unitario que apunta desde el elemento de corriente hacia el punto de observación</li>
+                    <li><strong>r</strong> es la distancia entre el elemento de corriente y el punto de observación</li>
+                </ul>
+            </div>
+            
+            <p>El campo magnético total se obtiene integrando esta expresión a lo largo de toda la trayectoria de la corriente:</p>
+            
+            <div class="formula-box">
+                <strong>B</strong> = (μ₀/4π) · ∫(I · d<strong>l</strong> × <strong>r̂</strong>) / r²
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Aplicaciones en Configuraciones Comunes</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Campo magnético de un alambre recto infinito</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Para un alambre recto infinito que transporta una corriente I, el campo magnético a una distancia r del alambre es:</p>
+                        
+                        <div class="formula-box">
+                            B = (μ₀ · I) / (2π · r)
+                        </div>
+                        
+                        <p>La dirección del campo magnético sigue la regla de la mano derecha: si el pulgar apunta en la dirección de la corriente, los dedos curvados indican la dirección del campo magnético alrededor del alambre.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Campo magnético en el centro de una espira circular</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Para una espira circular de radio R que transporta una corriente I, el campo magnético en el centro de la espira es:</p>
+                        
+                        <div class="formula-box">
+                            B = (μ₀ · I) / (2 · R)
+                        </div>
+                        
+                        <p>La dirección del campo magnético es perpendicular al plano de la espira, siguiendo la regla de la mano derecha: si los dedos de la mano derecha curvan en la dirección de la corriente, el pulgar apunta en la dirección del campo magnético.</p>
+                        
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Campo magnético en un solenoide</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Un solenoide es una bobina cilíndrica con múltiples vueltas de alambre. Para un solenoide ideal (muy largo en comparación con su diámetro), el campo magnético en el interior es uniforme y está dado por:</p>
+                        
+                        <div class="formula-box">
+                            B = μ₀ · n · I = μ₀ · (N/L) · I
+                        </div>
+                        
+                        <p>Donde:</p>
+                        <ul>
+                            <li>n es la densidad de vueltas (vueltas por unidad de longitud)</li>
+                            <li>N es el número total de vueltas</li>
+                            <li>L es la longitud del solenoide</li>
+                            <li>I es la corriente que circula por el solenoide</li>
+                        </ul>
+                        
+                        <p>En el exterior de un solenoide ideal, el campo magnético es prácticamente nulo.</p>
+                        
+                        <div class="diagram-container">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/VFPt_solenoid.svg/300px-VFPt_solenoid.svg.png" alt="Campo magnético en un solenoide" class="diagram">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Relación con otras Leyes del Electromagnetismo</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Ley de Ampère</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>La Ley de Ampère establece una relación entre la corriente eléctrica y el campo magnético que genera:</p>
+                        
+                        <div class="formula-box">
+                            ∮<strong>B</strong> · d<strong>l</strong> = μ₀ · I<sub>enc</sub>
+                        </div>
+                        
+                        <p>Esta ley es particularmente útil para calcular campos magnéticos en situaciones con alta simetría, como alambres rectos o solenoides. Para estas configuraciones, la Ley de Ampère proporciona una forma más sencilla de obtener los mismos resultados que se obtendrían aplicando la Ley de Biot-Savart.</p>
+                        
+                        <p>De hecho, la Ley de Ampère puede derivarse de la Ley de Biot-Savart aplicando el teorema de Stokes.</p>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Ecuaciones de Maxwell</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>La Ley de Biot-Savart es una de las cuatro ecuaciones fundamentales del electromagnetismo clásico, que junto con la Ley de Gauss para el magnetismo, la Ley de Faraday y la Ley de Ampère-Maxwell forman las ecuaciones de Maxwell:</p>
+                        
+                        <div class="table-container">
+                            <table>
+                                <tr>
+                                    <th>Ecuación</th>
+                                    <th>Nombre</th>
+                                    <th>Descripción</th>
+                                </tr>
+                                <tr>
+                                    <td>∇ · <strong>E</strong> = ρ/ε₀</td>
+                                    <td>Ley de Gauss</td>
+                                    <td>Relaciona el campo eléctrico con la carga eléctrica</td>
+                                </tr>
+                                <tr>
+                                    <td>∇ · <strong>B</strong> = 0</td>
+                                    <td>Ley de Gauss para el magnetismo</td>
+                                    <td>Establece que no existen monopolos magnéticos</td>
+                                </tr>
+                                <tr>
+                                    <td>∇ × <strong>E</strong> = -∂<strong>B</strong>/∂t</td>
+                                    <td>Ley de Faraday</td>
+                                    <td>Describe la inducción electromagnética</td>
+                                </tr>
+                                <tr>
+                                    <td>∇ × <strong>B</strong> = μ₀(J + ε₀∂<strong>E</strong>/∂t)</td>
+                                    <td>Ley de Ampère-Maxwell</td>
+                                    <td>Relaciona el campo magnético con la corriente eléctrica y el campo eléctrico cambiante</td>
+                                </tr>
+                            </table>
+                        </div>
+                        
+                        <p>La Ley de Biot-Savart está contenida en la Ley de Ampère-Maxwell, que es una versión generalizada de la Ley de Ampère que incluye el término de desplazamiento de corriente de Maxwell.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Limitaciones y Consideraciones</h2>
+            
+            <ul>
+                <li>La Ley de Biot-Savart es válida únicamente para corrientes estacionarias (corrientes continuas que no varían con el tiempo). Para corrientes que varían con el tiempo, se deben utilizar las ecuaciones completas de Maxwell.</li>
+                <li>La ley asume que el medio es el vacío. Si el campo magnético se calcula en un medio material, se debe considerar la permeabilidad magnética relativa (μ<sub>r</sub>) del material.</li>
+                <li>La ley no tiene en cuenta efectos relativistas. Para corrientes muy altas o partículas cargadas moviéndose a velocidades cercanas a la de la luz, se deben utilizar las formulaciones relativistas del electromagnetismo.</li>
+                <li>En la práctica, la integración de la Ley de Biot-Savart puede ser matemáticamente compleja para configuraciones no simétricas, requiriendo métodos numéricos para su solución.</li>
+            </ul>
+        </div>
+
+        <div class="content-section">
+            <h2>Ejemplos de Aplicación</h2>
+            
+            <div class="example-box">
+                <div class="example-title">Ejemplo 1: Campo magnético en un punto cerca de un alambre recto</div>
+                <p>Calculemos el campo magnético a una distancia de 10 cm de un alambre recto que transporta una corriente de 5 A.</p>
+                
+                <p>Datos:</p>
+                <ul>
+                    <li>I = 5 A</li>
+                    <li>r = 10 cm = 0.1 m</li>
+                    <li>μ₀ = 4π × 10⁻⁷ T·m/A</li>
+                </ul>
+                
+                <p>Aplicando la fórmula para un alambre recto:</p>
+                
+                <div class="formula-box">
+                    B = (μ₀ · I) / (2π · r) = (4π × 10⁻⁷ T·m/A · 5 A) / (2π · 0.1 m) = 1 × 10⁻⁵ T
+                </div>
+                
+                <p>El campo magnético a 10 cm del alambre es de 1 × 10⁻⁵ Tesla, dirigido tangencialmente a círculos concéntricos alrededor del alambre, siguiendo la regla de la mano derecha.</p>
+            </div>
+            
+            <div class="example-box">
+                <div class="example-title">Ejemplo 2: Campo magnético en el centro de una espira circular</div>
+                <p>Calculemos el campo magnético en el centro de una espira circular de radio 5 cm que transporta una corriente de 2 A.</p>
+                
+                <p>Datos:</p>
+                <ul>
+                    <li>I = 2 A</li>
+                    <li>R = 5 cm = 0.05 m</li>
+                    <li>μ₀ = 4π × 10⁻⁷ T·m/A</li>
+                </ul>
+                
+                <p>Aplicando la fórmula para una espira circular:</p>
+                
+                <div class="formula-box">
+                    B = (μ₀ · I) / (2 · R) = (4π × 10⁻⁷ T·m/A · 2 A) / (2 · 0.05 m) = 2.51 × 10⁻⁵ T
+                </div>
+                
+                <p>El campo magnético en el centro de la espira es de 2.51 × 10⁻⁵ Tesla, dirigido perpendicularmente al plano de la espira, siguiendo la regla de la mano derecha.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Ley de Biot-Savart - Simulador de Física © 2024</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                Constantes físicas: ε₀ = 8.85 × 10⁻¹² C²/N·m² | μ₀ = 4π × 10⁻⁷ T·m/A
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Función para manejar los acordeones
+        function toggleAccordion(element) {
+            const item = element.parentElement;
+            const allItems = document.querySelectorAll('.accordion-item');
+            
+            // Cierra todos los demás acordeones
+            allItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Abre o cierra el acordeón actual
+            item.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

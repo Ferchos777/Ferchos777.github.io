@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teoría de Circuitos Eléctricos - Simulador de Física</title>
+    <style>
+        /* === ESTILOS BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* === HEADER === */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #ecf0f1;
+        }
+
+        /* === NAVEGACIÓN === */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        /* === SECCIONES DE CONTENIDO === */
+        .content-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === ACORDEONES === */
+        .accordion {
+            margin: 20px 0;
+        }
+
+        .accordion-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 15px 20px;
+            background: rgba(255, 126, 95, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 126, 95, 0.3);
+        }
+
+        .accordion-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .accordion-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            padding: 20px;
+            max-height: 1000px;
+        }
+
+        /* === FÓRMULAS === */
+        .formula-box {
+            background: rgba(255, 126, 95, 0.1);
+            border: 1px solid rgba(255, 126, 95, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            font-family: 'Cambria Math', serif;
+            font-size: 1.3rem;
+        }
+
+        .formula-explanation {
+            margin-top: 15px;
+            font-size: 1rem;
+            text-align: left;
+            color: #bdc3c7;
+        }
+
+        /* === EJEMPLOS === */
+        .example-box {
+            background: rgba(52, 152, 219, 0.1);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .example-title {
+            color: #3498db;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        /* === IMÁGENES Y DIAGRAMAS === */
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .diagram {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === TIPOGRAFÍA === */
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff7e5f;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: #feb47b;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* === FOOTER === */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* === DISEÑO RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Teoría de Circuitos Eléctricos</h1>
+            <p class="subtitle">El estudio de las interconexiones de componentes eléctricos y las leyes que gobiernan el flujo de corriente</p>
+            
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="campo_magnetico.html" class="nav-btn">⚡ Simulador</a>
+                <a href="index_magnetismo_teoria.html" class="nav-btn active">📚 Teoría</a>
+                <a href="index_magnetismo_problemas.html" class="nav-btn">🎯 Problemas</a>
+            </div>
+        </header>
+
+        <div class="content-section">
+            <h2>Introducción a los Circuitos</h2>
+            <p>Un <strong>circuito eléctrico</strong> es una interconexión de componentes eléctricos que permite el flujo de corriente desde una fuente de energía, a través de una carga, y de vuelta a la fuente. Para que un circuito funcione, debe formar un camino cerrado o lazo.</p>
+            
+            <p>Los componentes básicos de un circuito simple son:</p>
+            <ul>
+                <li><strong>Fuente de Voltaje (o Fem):</strong> Proporciona la energía eléctrica al circuito. Ejemplos: baterías, fuentes de alimentación.</li>
+                <li><strong>Conductores:</strong> Cables, generalmente de cobre, que conectan los componentes y permiten el paso de la corriente.</li>
+                <li><strong>Carga (o Resistencia):</strong> Un componente que consume energía eléctrica, como una bombilla, un motor o una resistencia.</li>
+                <li><strong>Interruptor:</strong> Un dispositivo para abrir o cerrar el circuito, controlando el flujo de corriente.</li>
+            </ul>
+            
+        </div>
+
+        <div class="content-section">
+            <h2>Ley de Ohm</h2>
+            <p>La Ley de Ohm es la relación fundamental en los circuitos de corriente continua. Establece que la diferencia de potencial (voltaje) a través de un conductor es directamente proporcional a la corriente que fluye a través de él. La constante de proporcionalidad es la <strong>resistencia</strong> del conductor.</p>
+            
+            <div class="formula-box">
+                V = I · R
+            </div>
+            
+            <div class="formula-explanation">
+                <p>Donde:</p>
+                <ul>
+                    <li><strong>V</strong> es el voltaje o diferencia de potencial, medido en Voltios (V).</li>
+                    <li><strong>I</strong> es la intensidad de la corriente, medida en Amperios (A).</li>
+                    <li><strong>R</strong> es la resistencia, medida en Ohmios (Ω).</li>
+                </ul>
+                <p>Esta ley se puede reorganizar para calcular cualquier otra variable: I = V/R o R = V/I.</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Tipos de Circuitos: Serie y Paralelo</h2>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Circuitos en Serie</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>En un circuito en serie, los componentes están conectados uno después del otro, formando un único camino para la corriente.</p>
+                        
+                        <p><strong>Características:</strong></p>
+                        <ul>
+                            <li>La <strong>corriente (I)</strong> es la misma a través de todos los componentes.</li>
+                            <li>El <strong>voltaje total (V)</strong> es la suma de las caídas de voltaje en cada componente (V = V₁ + V₂ + ...).</li>
+                            <li>La <strong>resistencia total (R<sub>total</sub>)</strong> es la suma de las resistencias individuales (R<sub>total</sub> = R₁ + R₂ + ...).</li>
+                        </ul>
+                        
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Circuitos en Paralelo</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>En un circuito en paralelo, los componentes están conectados en ramas separadas, proporcionando múltiples caminos para la corriente.</p>
+                        
+                        <p><strong>Características:</strong></p>
+                        <ul>
+                            <li>El <strong>voltaje (V)</strong> es el mismo a través de todas las ramas.</li>
+                            <li>La <strong>corriente total (I)</strong> es la suma de las corrientes en cada rama (I = I₁ + I₂ + ...).</li>
+                            <li>El inverso de la <strong>resistencia total (1/R<sub>total</sub>)</strong> es la suma de los inversos de las resistencias individuales (1/R<sub>total</sub> = 1/R₁ + 1/R₂ + ...).</li>
+                        </ul>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Leyes de Kirchhoff</h2>
+            <p>Para circuitos más complejos que no son puramente serie o paralelo, se utilizan las Leyes de Kirchhoff, que son una aplicación de los principios de conservación de la carga y de la energía.</p>
+            
+            <div class="accordion">
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Ley de Corrientes de Kirchhoff (LCK o KCL)</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Esta ley se basa en el principio de conservación de la carga eléctrica. Establece que la suma algebraica de las corrientes que entran y salen de un <strong>nodo</strong> (un punto de unión) en un circuito es cero.</p>
+                        
+                        <div class="formula-box">
+                            Σ I<sub>entrante</sub> = Σ I<sub>saliente</sub>
+                        </div>
+                        
+                        <p>En otras palabras, la carga que llega a un nodo debe ser igual a la carga que sale de él.</p>
+                        
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">Ley de Tensiones de Kirchhoff (LTK o KVL)</div>
+                        <div class="accordion-icon">▼</div>
+                    </div>
+                    <div class="accordion-content">
+                        <p>Esta ley se basa en el principio de conservación de la energía. Establece que la suma algebraica de todas las caídas de tensión y aumentos de tensión alrededor de cualquier <strong>malla cerrada</strong> en un circuito es cero.</p>
+                        
+                        <div class="formula-box">
+                            Σ V = 0
+                        </div>
+                        
+                        <p>Al aplicar esta ley, se asignan signos positivos a las fuentes de voltaje y negativos a las caídas de voltaje a través de las resistencias (o viceversa, siempre que se sea consistente).</p>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Potencia en Circuitos Eléctricos</h2>
+            <p>La <strong>potencia eléctrica (P)</strong> es la tasa a la que se consume o se entrega energía en un circuito. Se mide en Vatios (W). La potencia disipada por un componente (como una resistencia) se puede calcular de varias formas:</p>
+            
+            <div class="formula-box">
+                P = V · I = I² · R = V² / R
+            </div>
+            
+            <p>Donde V e I son el voltaje y la corriente a través del componente, y R es su resistencia. Esta energía disipada generalmente se convierte en calor (efecto Joule).</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Ejemplo de Análisis de Circuito</h2>
+            
+            <div class="example-box">
+                <div class="example-title">Ejemplo: Análisis de un circuito mixto con Leyes de Kirchhoff</div>
+                <p>Considera el circuito mostrado en el diagrama. Calcula la corriente que fluye a través de cada resistencia.</p>
+                
+                
+                <p><strong>Datos:</strong></p>
+                <ul>
+                    <li>Voltaje de la fuente (V) = 12 V</li>
+                    <li>R₁ = 10 Ω</li>
+                    <li>R₂ = 20 Ω</li>
+                    <li>R₃ = 30 Ω</li>
+                </ul>
+                
+                <p><strong>Solución:</strong></p>
+                <ol>
+                    <li><strong>Calcular la resistencia equivalente (R<sub>eq</sub>):</strong>
+                        <p>R₂ y R₃ están en paralelo. Su resistencia combinada (R<sub>p</sub>) es:</p>
+                        <div class="formula-box">
+                            1/R<sub>p</sub> = 1/R₂ + 1/R₃ = 1/20 Ω + 1/30 Ω = 5/60 Ω
+                        </div>
+                        <div class="formula-box">
+                            R<sub>p</sub> = 12 Ω
+                        </div>
+                        <p>Ahora, R₁ y R<sub>p</sub> están en serie. La resistencia total del circuito es:</p>
+                        <div class="formula-box">
+                            R<sub>eq</sub> = R₁ + R<sub>p</sub> = 10 Ω + 12 Ω = 22 Ω
+                        </div>
+                    </li>
+                    <li><strong>Calcular la corriente total (I<sub>total</sub>):</strong>
+                        <p>Usando la Ley de Ohm para el circuito completo:</p>
+                        <div class="formula-box">
+                            I<sub>total</sub> = V / R<sub>eq</sub> = 12 V / 22 Ω ≈ 0.545 A
+                        </div>
+                        <p>Esta es la corriente que fluye a través de R₁ (I₁).</p>
+                    </li>
+                    <li><strong>Calcular el voltaje en la rama paralela (V<sub>p</sub>):</strong>
+                        <p>Primero, calculamos la caída de voltaje en R₁:</p>
+                        <div class="formula-box">
+                            V₁ = I₁ · R₁ = 0.545 A · 10 Ω = 5.45 V
+                        </div>
+                        <p>Por la Ley de Tensiones de Kirchhoff, el voltaje en la rama paralela es:</p>
+                        <div class="formula-box">
+                            V<sub>p</sub> = V - V₁ = 12 V - 5.45 V = 6.55 V
+                        </div>
+                    </li>
+                    <li><strong>Calcular las corrientes en R₂ y R₃ (I₂, I₃):</strong>
+                        <p>Usando la Ley de Ohm para cada resistencia en la rama paralela:</p>
+                        <div class="formula-box">
+                            I₂ = V<sub>p</sub> / R₂ = 6.55 V / 20 Ω ≈ 0.328 A
+                        </div>
+                        <div class="formula-box">
+                            I₃ = V<sub>p</sub> / R₃ = 6.55 V / 30 Ω ≈ 0.218 A
+                        </div>
+                    </li>
+                </ol>
+                
+                <p><strong>Resumen de resultados:</strong></p>
+                <ul>
+                    <li>Corriente a través de R₁ (I₁) ≈ 0.545 A</li>
+                    <li>Corriente a través de R₂ (I₂) ≈ 0.328 A</li>
+                    <li>Corriente a través de R₃ (I₃) ≈ 0.218 A</li>
+                </ul>
+                <p>Podemos verificar que I₂ + I₃ ≈ I₁, cumpliendo con la Ley de Corrientes de Kirchhoff en el nodo central.</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Circuitos Eléctricos - Simulador de Física © 2024</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                Constantes físicas: ε₀ = 8.85 × 10⁻¹² C²/N·m² | μ₀ = 4π × 10⁻⁷ T·m/A
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Función para manejar los acordeones
+        function toggleAccordion(element) {
+            const item = element.parentElement;
+            const allItems = document.querySelectorAll('.accordion-item');
+            
+            // Cierra todos los demás acordeones
+            allItems.forEach(otherItem => {
+                if (otherItem !== item && otherItem.classList.contains('active')) {
+                    otherItem.classList.remove('active');
+                }
+            });
+            
+            // Abre o cierra el acordeón actual
+            item.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

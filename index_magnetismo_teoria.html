@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Física - Página Principal</title>
+    <style>
+        /* === ESTILOS BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* === HEADER === */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #ecf0f1;
+        }
+
+        /* === NAVEGACIÓN === */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
+        /* === SECCIONES DE CONTENIDO === */
+        .content-section {
+            background: rgba(30, 35, 70, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* === TARJETAS DE TEMAS === */
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .topic-card {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .topic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 126, 95, 0.4);
+        }
+
+        .topic-card-header {
+            padding: 20px;
+            background: rgba(255, 126, 95, 0.2);
+            text-align: center;
+        }
+
+        .topic-card-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ff7e5f;
+        }
+
+        .topic-card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .topic-card-content {
+            padding: 20px;
+        }
+
+        .topic-card-description {
+            margin-bottom: 20px;
+            color: #bdc3c7;
+            font-size: 0.95rem;
+        }
+
+        .topic-card-link {
+            display: block;
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 126, 95, 0.2);
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 126, 95, 0.3);
+        }
+
+        .topic-card-link:hover {
+            background: rgba(255, 126, 95, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* === TIPOGRAFÍA === */
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ff7e5f;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            margin: 20px 0 15px;
+            color: #feb47b;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #bdc3c7;
+        }
+
+        /* === FOOTER === */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* === DISEÑO RESPONSIVE === */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .navigation {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+            
+            .topics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Simulador de Física</h1>
+            <p class="subtitle">Explora los fundamentos del electromagnetismo y los circuitos eléctricos a través de teoría, simulaciones y problemas prácticos</p>
+            
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="campo_electrico.html" class="nav-btn">⚡ Simulador</a>
+                <a href="index_magnetismo_teoria.html" class="nav-btn active">📚 Teoría</a>
+                <a href="index_magnetismo_problemas.html" class="nav-btn">🎯 Problemas</a>
+            </div>
+        </header>
+
+        <div class="content-section">
+            <h2>Bienvenido al Simulador de Física</h2>
+            <p>Esta plataforma educativa te permite explorar y comprender los principios fundamentales del electromagnetismo y los circuitos eléctricos. A través de teoría detallada, simulaciones interactivas y problemas prácticos, podrás profundizar en estos conceptos esenciales de la física.</p>
+            
+            <p>Selecciona uno de los temas a continuación para comenzar tu aprendizaje:</p>
+        </div>
+
+        <div class="content-section">
+            <h2>Temas de Estudio</h2>
+            
+            <div class="topics-grid">
+                <!-- Ley de Ampère -->
+                <div class="topic-card">
+                    <div class="topic-card-header">
+                        <div class="topic-card-icon">🧲</div>
+                        <div class="topic-card-title">Ley de Ampère</div>
+                    </div>
+                    <div class="topic-card-content">
+                        <p class="topic-card-description">
+                            La relación fundamental entre la corriente eléctrica y el campo magnético que genera. 
+                            Aprende sobre su formulación matemática y aplicaciones en configuraciones simétricas.
+                        </p>
+                        <a href="teo_ampere.html" class="topic-card-link">Explorar Teoría</a>
+                    </div>
+                </div>
+                
+                <!-- Ley de Biot-Savart -->
+                <div class="topic-card">
+                    <div class="topic-card-header">
+                        <div class="topic-card-icon">⚡</div>
+                        <div class="topic-card-title">Ley de Biot-Savart</div>
+                    </div>
+                    <div class="topic-card-content">
+                        <p class="topic-card-description">
+                            Fundamentos matemáticos y aplicaciones de la ley que describe el campo magnético 
+                            generado por corrientes eléctricas. Incluye ejemplos prácticos y relación con otras leyes.
+                        </p>
+                        <a href="teo_biosava.html" class="topic-card-link">Explorar Teoría</a>
+                    </div>
+                </div>
+                
+                <!-- Capacitancia y Dieléctricos -->
+                <div class="topic-card">
+                    <div class="topic-card-header">
+                        <div class="topic-card-icon">🔋</div>
+                        <div class="topic-card-title">Capacitancia y Dieléctricos</div>
+                    </div>
+                    <div class="topic-card-content">
+                        <p class="topic-card-description">
+                            El estudio de los capacitores, dispositivos que almacenan energía en un campo eléctrico, 
+                            y el efecto de los materiales aislantes en su funcionamiento.
+                        </p>
+                        <a href="teo_cap_diel.html" class="topic-card-link">Explorar Teoría</a>
+                    </div>
+                </div>
+                
+                <!-- Circuitos Eléctricos -->
+                <div class="topic-card">
+                    <div class="topic-card-header">
+                        <div class="topic-card-icon">🔌</div>
+                        <div class="topic-card-title">Circuitos Eléctricos</div>
+                    </div>
+                    <div class="topic-card-content">
+                        <p class="topic-card-description">
+                            El estudio de las interconexiones de componentes eléctricos y las leyes que gobiernan 
+                            el flujo de corriente. Incluye análisis de circuitos serie, paralelo y mixtos.
+                        </p>
+                        <a href="teo_circuitos.html" class="topic-card-link">Explorar Teoría</a>
+                    </div>
+                </div>
+                
+                <!-- Fuerza Magnética -->
+                <div class="topic-card">
+                    <div class="topic-card-header">
+                        <div class="topic-card-icon">🧭</div>
+                        <div class="topic-card-title">Fuerza Magnética</div>
+                    </div>
+                    <div class="topic-card-content">
+                        <p class="topic-card-description">
+                            La fuerza ejercida por campos magnéticos sobre cargas en movimiento y conductores 
+                            con corriente. Aprende sobre la fuerza de Lorentz y sus aplicaciones prácticas.
+                        </p>
+                        <a href="teo_fg.html" class="topic-card-link">Explorar Teoría</a>
+                    </div>
+                </div>
+                
+                <!-- Inducción Magnética -->
+                <div class="topic-card">
+                    <div class="topic-card-header">
+                        <div class="topic-card-icon">🌀</div>
+                        <div class="topic-card-title">Inducción Magnética</div>
+                    </div>
+                    <div class="topic-card-content">
+                        <p class="topic-card-description">
+                            El fenómeno por el cual un campo magnético variable induce una corriente eléctrica. 
+                            Incluye las leyes de Faraday y Lenz, y aplicaciones como generadores y transformadores.
+                        </p>
+                        <a href="teo_indumag.html" class="topic-card-link">Explorar Teoría</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2>Cómo Usar Esta Plataforma</h2>
+            
+            <div class="navigation">
+                <a href="simulator.html" class="nav-btn">⚡ Ir al Simulador</a>
+                <a href="teoria.html" class="nav-btn">📚 Ver Todas las Teorías</a>
+                <a href="problems.html" class="nav-btn">🎯 Resolver Problemas</a>
+            </div>
+            
+            <p style="margin-top: 20px; text-align: center;">
+                Explora cada sección para obtener una comprensión completa de los conceptos:
+            </p>
+            <ul style="text-align: left; max-width: 600px; margin: 20px auto;">
+                <li><strong>Teoría:</strong> Explicaciones detalladas con fórmulas y ejemplos</li>
+                <li><strong>Simulador:</strong> Experimenta con conceptos de forma interactiva</li>
+                <li><strong>Problemas:</strong> Practica con ejercicios y verifica tu comprensión</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p>Simulador de Física © 2024</p>
+            <p style="margin-top: 10px; font-size: 0.9rem; opacity: 0.7;">
+                Constantes físicas: ε₀ = 8.85 × 10⁻¹² C²/N·m² | μ₀ = 4π × 10⁻⁷ T·m/A
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
