@@ -35,6 +35,51 @@
             border-bottom: 2px solid rgba(255, 255, 255, 0.2);
         }
 
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* === NAVEGACIÓN === */
+        .navigation {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            background: rgba(255, 126, 95, 0.3);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.3);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            box-shadow: 0 5px 15px rgba(255, 126, 95, 0.4);
+        }
+
         h1 {
             font-size: 2.8rem;
             margin-bottom: 10px;
@@ -194,8 +239,15 @@
 <body>
     <div class="container">
         <header>
-            <h1>Simulador de Campo Magnético</h1>
-            <p>Visualiza campos magnéticos generados por diferentes elementos</p>
+            <h1>Simulador de Física - Electromagnetismo</h1>
+            <p class="subtitle">Explora los fascinantes fenómenos del electromagnetismo a través de problemas interactivos y simulaciones</p>
+            
+            <div class="navigation">
+                <a href="index.html" class="nav-btn">🏠 Inicio</a>
+                <a href="campo_electrico.html" class="nav-btn active">⚡ Simulador</a>
+                <a href="index_magnetismo_teoria.html" class="nav-btn">📚 Teoría</a>
+                <a href="index_magnetismo_problemas.html" class="nav-btn">🎯 Problemas</a>
+            </div>
         </header>
         
         <div class="simulator-container">
@@ -918,4 +970,5 @@
         draw();
     </script>
 </body>
+
 </html>
